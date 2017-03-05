@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Fetch;
-
 @Entity
 public class BookCatalog {
 	
@@ -32,6 +30,10 @@ public class BookCatalog {
 	@Transient
 	private Boolean isAvailable;
 	
+	public void setIsAvailable(Boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
+
 	public BookCatalog()
 	{
 		super();
@@ -41,14 +43,6 @@ public class BookCatalog {
 	{
 		this(bookCatalog);
 		this.averageRating = averageRating;
-	}
-	
-	public BookCatalog(BookCatalog bookCatalog, Boolean isActive, Boolean isAvailable)
-	{
-		this(bookCatalog);
-		if(isActive == null) isActive = false;
-		if(isAvailable == null) isAvailable = false;
-		this.isAvailable = isAvailable && isActive;
 	}
 	
 	public BookCatalog(String name, String author, String isbn)

@@ -220,7 +220,7 @@ public class BookCatalogJpaRepositoryTest {
 		ratingAndReview.setId(ratingAndReviewPK);
 		ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
 		entityManager.clear();
-		
+
 		List<BookCatalog> bookCatalogs = new ArrayList<>();
 		bookCatalogs.add(bookCatalog);
 		List<BookCatalog> averageRatingForAllBookCatalogs = bookCatalogJpaRepository
@@ -279,22 +279,19 @@ public class BookCatalogJpaRepositoryTest {
 				.getBookCatalog().getId());
 		bookCatalogs.add(bookCatalog.getId());
 		assertEquals(book, bookCatalog.getBooks().get(0));
-		List<BookCatalog> updateCatalogWithAvailability = bookCatalogJpaRepository
-				.getCatalogWithAvailability(bookCatalogs);
+		List<Long> updateCatalogWithAvailability = bookCatalogJpaRepository
+				.getAvailableAndActiveBookCatalogIds(bookCatalogs);
 		assertNotNull(updateCatalogWithAvailability);
 		assertEquals(1, updateCatalogWithAvailability.size());
-		assertEquals(true, updateCatalogWithAvailability.get(0)
-				.getIsAvailable());
+		assertEquals(bookCatalog.getId(), updateCatalogWithAvailability.get(0));
 
 		book.setIsActive(false);
 		bookJpaRepository.saveAndFlush(book);
 		entityManager.clear();
 		updateCatalogWithAvailability = bookCatalogJpaRepository
-				.getCatalogWithAvailability(bookCatalogs);
+				.getAvailableAndActiveBookCatalogIds(bookCatalogs);
 		assertNotNull(updateCatalogWithAvailability);
-		assertEquals(1, updateCatalogWithAvailability.size());
-		assertEquals(false, updateCatalogWithAvailability.get(0)
-				.getIsAvailable());
+		assertEquals(0, updateCatalogWithAvailability.size());
 	}
 
 	private Book createTestBook() {

@@ -11,7 +11,13 @@ public interface LibraryService {
 
 	Book addBookToTheCatalog(Long bookCatalogId, Book book);
 	
-	List<BookCatalog> findBookCatalogByIsbn(String isbn);
+	List<BookCatalog> getAllBookCatalogs();
+	
+	List<BookCatalog> searchBookCatalogByIsbn(String isbn);
+	
+	List<BookCatalog> searchBookCatalogByAuthor(String author);
+	
+	List<BookCatalog> searchBookCatalogByBookName(String name);
 	
 	List<BookCatalog> getAllBookCatalogsWithRatingsAndAvailability();
 	

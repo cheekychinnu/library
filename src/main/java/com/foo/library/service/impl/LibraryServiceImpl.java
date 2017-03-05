@@ -1,6 +1,13 @@
 package com.foo.library.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +21,9 @@ import com.foo.library.service.LibraryService;
 @Component
 public class LibraryServiceImpl implements LibraryService {
 
+	@PersistenceContext
+    private EntityManager entityManager;
+	
 	@Autowired
 	private BookCatalogJpaRepository bookCatalogJpaRepository;
 
@@ -34,14 +44,49 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public List<BookCatalog> findBookCatalogByIsbn(String isbn) {
+	public List<BookCatalog> searchBookCatalogByIsbn(String isbn) {
 		return bookCatalogJpaRepository.findByIsbn(isbn);
 	}
 
 	@Override
+	public List<BookCatalog> getAllBookCatalogs() {
+		entityManager.clear();
+		return bookCatalogJpaRepository.findAll();
+	}
+
+	@Override
+	public List<BookCatalog> searchBookCatalogByAuthor(String author) {
+		return bookCatalogJpaRepository
+				.findByAuthorContainingIgnoreCase(author);
+	}
+
+	@Override
+	public List<BookCatalog> searchBookCatalogByBookName(String name) {
+		return bookCatalogJpaRepository.findByNameContainingIgnoreCase(name);
+	}
+
+	@Override
 	public List<BookCatalog> getAllBookCatalogsWithRatingsAndAvailability() {
-		// TODO Auto-generated method stub
-		return null;
+		entityManager.clear();
+		
+		List<BookCatalog> allCatalogs = bookCatalogJpaRepository.findAll();
+		
+		List<BookCatalog> catalogsWithAverageRating = bookCatalogJpaRepository
+				.fillCatalogWithAverageRatingIfRatingsArePresent(allCatalogs);
+		
+		Set<BookCatalog> uniqueCatalogs = new HashSet<>();
+		uniqueCatalogs.addAll(catalogsWithAverageRating);
+		uniqueCatalogs.addAll(allCatalogs);
+		
+		List<Long> bookCatalogIds = allCatalogs.stream()
+				.map(catalog -> catalog.getId()).collect(Collectors.toList());
+		
+		List<Long> availableCatalogIds = bookCatalogJpaRepository
+				.getAvailableAndActiveBookCatalogIds(bookCatalogIds);
+		uniqueCatalogs.stream().forEach(c->c.setIsAvailable(false));
+		uniqueCatalogs.stream().filter(c->availableCatalogIds.contains(c.getId())).forEach(c->c.setIsAvailable(true));
+		
+		return new ArrayList<>(uniqueCatalogs);
 	}
 
 }
