@@ -10,11 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Fetch;
+
 @Entity
 public class BookCatalog {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	private String name;
@@ -27,6 +29,9 @@ public class BookCatalog {
 	@Transient
 	private Double averageRating;
 	
+	@Transient
+	private Boolean isAvailable;
+	
 	public BookCatalog()
 	{
 		super();
@@ -36,6 +41,14 @@ public class BookCatalog {
 	{
 		this(bookCatalog);
 		this.averageRating = averageRating;
+	}
+	
+	public BookCatalog(BookCatalog bookCatalog, Boolean isActive, Boolean isAvailable)
+	{
+		this(bookCatalog);
+		if(isActive == null) isActive = false;
+		if(isAvailable == null) isAvailable = false;
+		this.isAvailable = isAvailable && isActive;
 	}
 	
 	public BookCatalog(String name, String author, String isbn)
@@ -95,6 +108,11 @@ public class BookCatalog {
 		return averageRating;
 	}
 
+	public Boolean getIsAvailable() {
+		return isAvailable;
+	}
+
+	
 	@Override
 	public String toString() {
 		return "BookCatalog [id=" + id + ", name=" + name + ", author="

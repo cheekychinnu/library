@@ -1,14 +1,11 @@
 package com.foo.library.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.foo.library.model.BookCatalog;
 import com.foo.library.model.RatingAndReview;
 import com.foo.library.model.RatingAndReviewPK;
 
@@ -29,9 +26,4 @@ public interface RatingAndReviewJpaRepository extends
 			@Param("bookCatalogId") Long bookCatalogId,
 			@Param("rating") Integer rating);
 	
-	
-	@Query("select new BookCatalog(b, avg(r.rating)) from RatingAndReview r "
-			+ "join r.bookCatalog as b "
-			+ "group by b")
-	List<BookCatalog> computeAverageRatingForAllBookCatalogs();
 }

@@ -1,8 +1,7 @@
 package com.foo.library.repository;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,88 +92,6 @@ public class RatingAndReviewJpaRepositoryTest {
 		entityManager.clear();
 		ratingAndReview = ratingAndReviewJpaRepository.getOne(ratingAndReviewPK);
 		assertEquals(updatedRating, ratingAndReview.getRating());
-	}
-	
-	@Test
-	public void testAverageRating()
-	{
-		BookCatalog bookCatalog = createTestBookCatalog();
-		String userId = "vino";
-		
-		RatingAndReview ratingAndReview = new RatingAndReview();
-		ratingAndReview.setRating(2);
-		ratingAndReview.setReview("test review");
-		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId, bookCatalog.getId());
-		ratingAndReview.setId(ratingAndReviewPK);
-		
-		ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
-		
-		userId = "chinnu";
-		ratingAndReview = new RatingAndReview();
-		ratingAndReview.setRating(5);
-		ratingAndReview.setReview("test review");
-		ratingAndReviewPK = new RatingAndReviewPK(userId, bookCatalog.getId());
-		ratingAndReview.setId(ratingAndReviewPK);
-		ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
-		entityManager.clear();
-		List<BookCatalog> averageRatingForAllBookCatalogs = ratingAndReviewJpaRepository.computeAverageRatingForAllBookCatalogs();
-		assertNotNull(averageRatingForAllBookCatalogs);
-		assertEquals(1, averageRatingForAllBookCatalogs.size());
-		assertEquals(bookCatalog, averageRatingForAllBookCatalogs.get(0));
-		Double averageRating = averageRatingForAllBookCatalogs.get(0).getAverageRating();
-		assertNotNull(averageRating);
-		assertEquals(new Double(3.5d), averageRating);
-	}
-	
-	@Test
-	public void testAverageRatingForBookWithOneNullRating()
-	{
-		BookCatalog bookCatalog = createTestBookCatalog();
-		String userId = "chinnu";
-		
-		RatingAndReview ratingAndReview = new RatingAndReview();
-		ratingAndReview.setReview("test review");
-		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId, bookCatalog.getId());
-		ratingAndReview.setId(ratingAndReviewPK);
-		
-		ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
-		
-		userId = "vino";
-		ratingAndReview = new RatingAndReview();
-		ratingAndReview.setRating(5);
-		ratingAndReview.setReview("test review");
-		ratingAndReviewPK = new RatingAndReviewPK(userId, bookCatalog.getId());
-		ratingAndReview.setId(ratingAndReviewPK);
-		ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
-		entityManager.clear();
-		List<BookCatalog> averageRatingForAllBookCatalogs = ratingAndReviewJpaRepository.computeAverageRatingForAllBookCatalogs();
-		assertNotNull(averageRatingForAllBookCatalogs);
-		assertEquals(1, averageRatingForAllBookCatalogs.size());
-		assertEquals(bookCatalog, averageRatingForAllBookCatalogs.get(0));
-		Double averageRating = averageRatingForAllBookCatalogs.get(0).getAverageRating();
-		assertNotNull(averageRating);
-		assertEquals(new Double(5), averageRating);
-	}
-	
-	@Test
-	public void testAverageRatingForBookWithNoRating()
-	{
-		BookCatalog bookCatalog = createTestBookCatalog();
-		String userId = "chinnu";
-		
-		RatingAndReview ratingAndReview = new RatingAndReview();
-		ratingAndReview.setReview("test review");
-		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId, bookCatalog.getId());
-		ratingAndReview.setId(ratingAndReviewPK);
-		
-		ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
-		
-		List<BookCatalog> averageRatingForAllBookCatalogs = ratingAndReviewJpaRepository.computeAverageRatingForAllBookCatalogs();
-		assertNotNull(averageRatingForAllBookCatalogs);
-		assertEquals(1, averageRatingForAllBookCatalogs.size());
-		assertEquals(bookCatalog, averageRatingForAllBookCatalogs.get(0));
-		Double averageRating = averageRatingForAllBookCatalogs.get(0).getAverageRating();
-		assertNull(averageRating);
 	}
 	
 	private BookCatalog createTestBookCatalog() {
