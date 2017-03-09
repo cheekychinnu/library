@@ -4,7 +4,10 @@ import java.util.List;
 
 import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
+import com.foo.library.model.Penalty;
 import com.foo.library.model.RatingAndReview;
+import com.foo.library.model.RentResponse;
+import com.foo.library.model.ReturnResponse;
 import com.foo.library.model.Subscriber;
 
 public interface LibraryService {
@@ -37,4 +40,18 @@ public interface LibraryService {
 	
 	List<RatingAndReview> getRatingAndReviewsForUser(String userId);
 	
+	RentResponse rentBook(String userId, Long bookId);
+	
+	// pending test cases :
+	ReturnResponse returnBook(Long rentId, Long bookId);
+	
+	void markPenaltyAsPaid(Long rentId);
+	
+	void logMissingBook(Long rentId);
+	
+	void markPenaltyAsContributed(Long rentId, Long bookId);
+	
+	List<Penalty> getPendingPenaltyForUser(String userId);
+	
+	void markPenaltyAsSuspended(Long rentId);
 }

@@ -22,6 +22,7 @@ public class Rent {
 	private Date issuedDate;
 	private Date dueDate;
 	private Date actualReturnDate;
+	private Boolean isClosed = false;
 
 	public Rent()
 	{
@@ -35,6 +36,15 @@ public class Rent {
 		this.dueDate = dueDate;
 	}
 	
+	
+	public Boolean getIsClosed() {
+		return isClosed;
+	}
+
+	public void setIsClosed(Boolean isClosed) {
+		this.isClosed = isClosed;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -85,9 +95,10 @@ public class Rent {
 
 	@Override
 	public String toString() {
-		return "Rent [rentId=" + id + ", book=" + book + ", userId="
-				+ userId + ", issuedDate=" + issuedDate + ", dueDate="
-				+ dueDate + ", actualReturnDate=" + actualReturnDate + "]";
+		return "Rent [id=" + id + ", book=" + book + ", userId=" + userId
+				+ ", issuedDate=" + issuedDate + ", dueDate=" + dueDate
+				+ ", actualReturnDate=" + actualReturnDate + ", isClosed="
+				+ isClosed + "]";
 	}
 
 	@Override
@@ -105,6 +116,7 @@ public class Rent {
 		result = prime * result
 				+ ((dueDate == null) ? 0 : dueDate.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result + ((isClosed == null) ? 0 : isClosed.hashCode());
 		return result;
 	}
 
@@ -146,6 +158,11 @@ public class Rent {
 			if (other.getUserId() != null)
 				return false;
 		} else if (!userId.equals(other.getUserId()))
+			return false;
+		if (isClosed == null) {
+			if (other.getIsClosed() != null)
+				return false;
+		} else if (!isClosed.equals(other.getIsClosed()))
 			return false;
 		return true;
 	}

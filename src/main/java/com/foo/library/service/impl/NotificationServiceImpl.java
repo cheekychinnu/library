@@ -29,4 +29,9 @@ public class NotificationServiceImpl implements NotificationService {
 				+ " for catalog:" + catalog);
 	}
 
+	@Override
+	public void notifyWatchers(Long bookCatalogId) {
+		
+	}
+
 }

@@ -3,6 +3,8 @@ package com.foo.library.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,44 @@ public class RatingAndReviewJpaRepositoryTest {
 		ratingAndReview = ratingAndReviewJpaRepository.getOne(ratingAndReviewPK);
 		assertNotNull(ratingAndReview.getBookCatalog());
 		assertEquals(bookCatalog, ratingAndReview.getBookCatalog());
+	}
+	
+	@Test
+	public void testFindBy()
+	{
+		BookCatalog bookCatalog = createTestBookCatalog();
+		String userId = "chinnu";
+		
+		RatingAndReview ratingAndReview = new RatingAndReview();
+		ratingAndReview.setRating(2);
+		ratingAndReview.setReview("test review");
+		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId, bookCatalog.getId());
+		ratingAndReview.setId(ratingAndReviewPK);
+		
+		ratingAndReview = ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
+		List<RatingAndReview> findByIdUserId = ratingAndReviewJpaRepository.findByIdUserId(userId);
+		assertNotNull(findByIdUserId );
+		assertEquals(1, findByIdUserId .size());
+		assertEquals(ratingAndReview,findByIdUserId .get(0));
+	}
+	
+	@Test
+	public void testFindByIdBookCatalogId()
+	{
+		BookCatalog bookCatalog = createTestBookCatalog();
+		String userId = "chinnu";
+		
+		RatingAndReview ratingAndReview = new RatingAndReview();
+		ratingAndReview.setRating(2);
+		ratingAndReview.setReview("test review");
+		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId, bookCatalog.getId());
+		ratingAndReview.setId(ratingAndReviewPK);
+		
+		ratingAndReview = ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
+		List<RatingAndReview> findByIdBookCatalogId = ratingAndReviewJpaRepository.findByIdBookCatalogId(bookCatalog.getId());
+		assertNotNull(findByIdBookCatalogId);
+		assertEquals(1, findByIdBookCatalogId.size());
+		assertEquals(ratingAndReview,findByIdBookCatalogId.get(0));
 	}
 	
 	@Test

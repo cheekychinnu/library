@@ -1,5 +1,7 @@
 package com.foo.library.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +13,8 @@ import com.foo.library.model.PenaltyStatus;
 import com.foo.library.model.PenaltyType;
 
 public interface PenaltyJpaRepository extends JpaRepository<Penalty, Long>{
+	
+	List<Penalty> findByRentUserIdAndStatus(String userId, PenaltyStatus status);
 	
 	@Modifying
 	@Query("update Penalty p set p.status = :status where p.rentId = :rentId")

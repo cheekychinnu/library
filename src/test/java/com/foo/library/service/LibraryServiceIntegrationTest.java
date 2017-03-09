@@ -1,9 +1,6 @@
 package com.foo.library.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +19,7 @@ import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
 import com.foo.library.model.RatingAndReview;
 import com.foo.library.model.RatingAndReviewPK;
+import com.foo.library.model.RentResponse;
 import com.foo.library.model.Subscriber;
 import com.foo.library.repository.BookCatalogJpaRepository;
 import com.foo.library.repository.RatingAndReviewJpaRepository;
@@ -92,6 +90,55 @@ public class LibraryServiceIntegrationTest {
 		assertEquals(1, ratingAndReviewsForUser.size());
 		assertEquals(userId2, ratingAndReviewsForUser.get(0).getId().getUserId());
 		assertEquals(updatedReview,ratingAndReviewsForUser.get(0).getReview());
+	}
+	
+	@Test
+	public void testRentAvailableBook()
+	{
+		String author = "J.K.Rowling";
+		String isbn = "129847874";
+		String bookName = "Harry Potter And The Prisoner Of Azkhaban";
+		BookCatalog bookCatalog = constructBookCatalog(bookName, author, isbn);
+		BookCatalog addBookCatalogToLibrary = libraryService
+				.addBookCatalogToLibrary(bookCatalog);
+
+		String comments = "test insert";
+		String provider = "chinnu";
+		Book book = new Book(provider, true, true, comments);
+		libraryService.addBookToTheCatalog(addBookCatalogToLibrary.getId(),
+				book);
+		
+		String userId = "chinnu";
+		Long bookId = book.getId();
+		RentResponse response = libraryService.rentBook(userId, bookId);
+		assertNotNull(response);
+		assertTrue(response.getIsSuccess());
+		assertNotNull(response.getRent());
+		System.out.println(response.getRent().getDueDate());
+	}
+
+	@Test
+	public void testRentUnavailableBook()
+	{
+		String author = "J.K.Rowling";
+		String isbn = "129847874";
+		String bookName = "Harry Potter And The Prisoner Of Azkhaban";
+		BookCatalog bookCatalog = constructBookCatalog(bookName, author, isbn);
+		BookCatalog addBookCatalogToLibrary = libraryService
+				.addBookCatalogToLibrary(bookCatalog);
+
+		String comments = "test insert";
+		String provider = "chinnu";
+		Book book = new Book(provider, true, false, comments);
+		libraryService.addBookToTheCatalog(addBookCatalogToLibrary.getId(),
+				book);
+		
+		String userId = "chinnu";
+		Long bookId = book.getId();
+		RentResponse response = libraryService.rentBook(userId, bookId);
+		assertNotNull(response);
+		assertFalse(response.getIsSuccess());
+		assertNotNull(response.getMessage());
 	}
 	
 	@Test

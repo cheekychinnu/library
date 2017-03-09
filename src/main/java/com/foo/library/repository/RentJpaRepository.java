@@ -15,10 +15,14 @@ import com.foo.library.model.Rent;
 public interface RentJpaRepository extends JpaRepository<Rent, Long>{
 	
 	@Modifying
-	@Query("update Rent set actualReturnDate = :actualReturnDate where id = :rentId")
-	int updateActualReturnDate(@Param("rentId") Long rentId, @Param("actualReturnDate") Date actualReturnDate);
+	@Query("update Rent set actualReturnDate = :actualReturnDate , isClosed = 1 where id = :rentId")
+	int updateActualReturnDateAndMarkAsClosed(@Param("rentId") Long rentId, @Param("actualReturnDate") Date actualReturnDate);
 	
 	List<Rent> findByUserId(String userID);
-	List<Rent> findByUserIdAndActualReturnDateIsNull(String userID);
-	List<Rent> findByUserIdAndActualReturnDateIsNullAndDueDateBefore(String userID, Date currentDate);
+	List<Rent> findByUserIdAndIsClosedFalse(String userID);
+	List<Rent> findByUserIdAndIsClosedFalseAndDueDateBefore(String userID, Date currentDate);
+
+	@Modifying
+	@Query("update Rent set isClosed = 1 where id = :rentId")
+	int markAsClosed(@Param("rentId") Long rentId);
 }
