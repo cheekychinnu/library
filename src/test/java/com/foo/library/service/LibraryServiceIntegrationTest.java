@@ -22,6 +22,7 @@ import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
 import com.foo.library.model.RatingAndReview;
 import com.foo.library.model.RatingAndReviewPK;
+import com.foo.library.model.Subscriber;
 import com.foo.library.repository.BookCatalogJpaRepository;
 import com.foo.library.repository.RatingAndReviewJpaRepository;
 
@@ -41,6 +42,74 @@ public class LibraryServiceIntegrationTest {
 	@Autowired
 	private BookCatalogJpaRepository bookCatalogJpaRepository;
 
+	@Test
+	public void testRatingAndReview()
+	{
+		String author = "J.K.Rowling";
+		String isbn = "129847874";
+		String bookName = "Harry Potter And The Prisoner Of Azkhaban";
+		BookCatalog bookCatalog = constructBookCatalog(bookName, author, isbn);
+		BookCatalog addedCatalog = libraryService.addBookCatalogToLibrary(bookCatalog);
+		
+		Long bookCatalogId = addedCatalog.getId();
+		String userId1 = "chinnu";
+		String review ="Good one";
+		Integer rating = 4;
+		
+		libraryService.rateAndReview(bookCatalogId, userId1, rating, review);
+		 
+		String userId2 = "vino";
+		libraryService.rateAndReview(bookCatalogId, userId2, 3, review);
+		
+		List<RatingAndReview> ratingsAndReviews = libraryService.getRatingAndReviewsForBookCatalog(bookCatalogId);
+		assertNotNull(ratingsAndReviews);
+		assertEquals(2, ratingsAndReviews.size());
+		List<String> ratedUsers = ratingsAndReviews.stream().map(r->r.getId().getUserId()).collect(Collectors.toList());
+		assertTrue(ratedUsers.contains(userId1));
+		assertTrue(ratedUsers.contains(userId2));
+		
+		List<RatingAndReview> ratingAndReviewsForUser = libraryService.getRatingAndReviewsForUser(userId1);
+		assertNotNull(ratingAndReviewsForUser);
+		assertEquals(1, ratingAndReviewsForUser.size());
+		assertEquals(userId1, ratingAndReviewsForUser.get(0).getId().getUserId());
+		assertEquals(rating, ratingAndReviewsForUser.get(0).getRating());
+		
+		List<BookCatalog> catalogs = libraryService.getAllBookCatalogsWithRatingsAndAvailability();
+		assertNotNull(catalogs);
+		assertEquals(1, catalogs.size());
+		assertEquals(new Double(3.5), catalogs.get(0).getAverageRating());
+		
+		libraryService.updateRating(bookCatalogId, userId2, 4);
+		catalogs = libraryService.getAllBookCatalogsWithRatingsAndAvailability();
+		assertNotNull(catalogs);
+		assertEquals(1, catalogs.size());
+		assertEquals(new Double(4), catalogs.get(0).getAverageRating());
+		
+		String updatedReview = "updated review";
+		libraryService.updateReview(bookCatalogId, userId2, updatedReview);
+		ratingAndReviewsForUser = libraryService.getRatingAndReviewsForUser(userId2);
+		assertNotNull(ratingAndReviewsForUser);
+		assertEquals(1, ratingAndReviewsForUser.size());
+		assertEquals(userId2, ratingAndReviewsForUser.get(0).getId().getUserId());
+		assertEquals(updatedReview,ratingAndReviewsForUser.get(0).getReview());
+	}
+	
+	@Test
+	public void testSubscribeForNewAdditions()
+	{
+		String userId = "chinnu";
+		libraryService.subscribeForNewAdditions(userId);
+		List<Subscriber> subscribersForNewAdditions = libraryService.getSubscribersForNewAdditions();
+		assertNotNull(subscribersForNewAdditions);
+		assertEquals(1, subscribersForNewAdditions.size());
+		assertEquals(userId, subscribersForNewAdditions.get(0).getUserId());
+		String author = "J.K.Rowling";
+		String isbn = "129847874";
+		String bookName = "Harry Potter And The Prisoner Of Azkhaban";
+		BookCatalog bookCatalog = constructBookCatalog(bookName, author, isbn);
+		libraryService.addBookCatalogToLibrary(bookCatalog);
+	}
+	
 	@Test
 	public void testGetAllBookCatalogsWithRatingsAndAvailabilityForNoBookAndNoRating() {
 		String author = "J.K.Rowling";
