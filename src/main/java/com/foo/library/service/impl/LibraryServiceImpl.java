@@ -1,5 +1,6 @@
 package com.foo.library.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -292,6 +293,25 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public void markPenaltyAsSuspended(Long rentId) {
 		penaltyJpaRepository.updateStatus(rentId, PenaltyStatus.SUSPENDED);
+	}
+
+	@Override
+	public List<Rent> getOpenRents(String userId) {
+		// TODO : add isDueDatePassed flag
+		return rentJpaRepository.findByUserIdAndIsClosedFalse(userId);
+	}
+
+	@Override
+	public List<Rent> getAllRents(String userId) {
+		return rentJpaRepository.findByUserId(userId);
+	}
+
+	@Override
+	public List<Rent> getRentsDueIn(Integer noOfDays) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date()); 
+		c.add(Calendar.DATE, noOfDays); 
+		return rentJpaRepository.findByIsClosedFalseAndDueDateBefore(c.getTime());
 	}
 
 }

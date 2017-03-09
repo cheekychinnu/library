@@ -31,7 +31,12 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void notifyWatchers(Long bookCatalogId) {
-		
+		// TODO
+	}
+
+	@Override
+	public void notifyUpcomingDueDates() {
+		// TODO
 	}
 
 }

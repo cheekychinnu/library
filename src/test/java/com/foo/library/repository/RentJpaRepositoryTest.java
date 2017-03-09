@@ -121,6 +121,26 @@ public class RentJpaRepositoryTest {
 	}
 
 	@Test
+	public void testFindByIsClosedFalseAndDueDateBefore() {
+		Date returnDate = DateUtil.parse("2017-03-04");
+		Date issuedDate = DateUtil.parse("2017-02-04");
+		String userId = "vino";
+		Rent rent = new Rent(userId, issuedDate, returnDate);
+
+		Book book = createTestBook();
+		rent.setBook(book);
+
+		rent = rentJpaRepository.saveAndFlush(rent);
+		Date currentDate = DateUtil.parse("2017-03-05");
+		List<Rent> findBy = rentJpaRepository
+				.findByIsClosedFalseAndDueDateBefore(
+						currentDate);
+		assertNotNull(findBy);
+		assertEquals(1, findBy.size());
+		assertEquals(rent, findBy.get(0));
+	}
+
+	@Test
 	public void testMarkAsClosed() {
 		Date returnDate = DateUtil.parse("2017-03-04");
 		Date issuedDate = DateUtil.parse("2017-02-04");

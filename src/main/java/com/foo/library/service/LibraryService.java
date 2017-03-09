@@ -6,6 +6,7 @@ import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
 import com.foo.library.model.Penalty;
 import com.foo.library.model.RatingAndReview;
+import com.foo.library.model.Rent;
 import com.foo.library.model.RentResponse;
 import com.foo.library.model.ReturnResponse;
 import com.foo.library.model.Subscriber;
@@ -54,4 +55,10 @@ public interface LibraryService {
 	List<Penalty> getPendingPenaltyForUser(String userId);
 	
 	void markPenaltyAsSuspended(Long rentId);
+	
+	List<Rent> getAllRents(String userId);
+	
+	List<Rent> getOpenRents(String userId);
+	
+	List<Rent> getRentsDueIn(Integer noOfDays);
 }

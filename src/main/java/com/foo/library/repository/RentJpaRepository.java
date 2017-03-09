@@ -25,4 +25,6 @@ public interface RentJpaRepository extends JpaRepository<Rent, Long>{
 	@Modifying
 	@Query("update Rent set isClosed = 1 where id = :rentId")
 	int markAsClosed(@Param("rentId") Long rentId);
+
+	List<Rent> findByIsClosedFalseAndDueDateBefore(Date date);
 }
