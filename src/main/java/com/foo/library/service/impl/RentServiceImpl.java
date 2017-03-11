@@ -22,9 +22,10 @@ import com.foo.library.repository.PenaltyJpaRepository;
 import com.foo.library.repository.RentJpaRepository;
 import com.foo.library.service.NotificationService;
 import com.foo.library.service.RentService;
+import com.foo.library.util.Util;
 
 @Component
-public class RentServiceImpl implements RentService{
+public class RentServiceImpl implements RentService {
 
 	@Autowired
 	private BookJpaRepository bookJpaRepository;
@@ -37,7 +38,7 @@ public class RentServiceImpl implements RentService{
 
 	@Autowired
 	private NotificationService notificationService;
-	
+
 	@Override
 	public RentResponse rentBook(String userId, Long bookId) {
 
@@ -87,7 +88,8 @@ public class RentServiceImpl implements RentService{
 				returnDate);
 		Rent rent = rentJpaRepository.getOne(rentId);
 		ReturnResponse returnResponse;
-		boolean isDueDatePassed = isDueDatePassed(rent.getDueDate(), returnDate);
+		boolean isDueDatePassed = Util.isDueDatePassed(rent.getDueDate(),
+				returnDate);
 		if (isDueDatePassed) {
 			Penalty penalty = enterPenaltyForMissingDueDate(rent);
 			returnResponse = new ReturnResponse(penalty);
@@ -109,10 +111,6 @@ public class RentServiceImpl implements RentService{
 		penalty.setAmount(amount);
 		penalty = penaltyJpaRepository.saveAndFlush(penalty);
 		return penalty;
-	}
-
-	private boolean isDueDatePassed(Date dueDate, Date returnDate) {
-		return returnDate.after(dueDate);
 	}
 
 	@Override
@@ -155,17 +153,27 @@ public class RentServiceImpl implements RentService{
 	public List<Rent> getOpenRents(String userId) {
 		List<Rent> openRents = rentJpaRepository
 				.findByUserIdAndIsClosedFalse(userId);
-		Date currentDate = DateUtil.now();
-		for (Rent r : openRents) {
-			boolean dueDatePassed = isDueDatePassed(r.getDueDate(), currentDate);
-			r.setIsDueDatePassed(dueDatePassed);
-		}
+		fillIsDueDatePassed(openRents);
 		return openRents;
+	}
+
+	private void fillIsDueDatePassed(List<Rent> rents) {
+		Date currentDate = DateUtil.now();
+		for (Rent r : rents) {
+			Date dueDate = r.getDueDate();
+			if (dueDate == null) {
+				continue;
+			}
+			boolean dueDatePassed = Util.isDueDatePassed(dueDate, currentDate);
+			r.setDueDatePassed(dueDatePassed);
+		}
 	}
 
 	@Override
 	public List<Rent> getAllRents(String userId) {
-		return rentJpaRepository.findByUserId(userId);
+		List<Rent> rents = rentJpaRepository.findByUserId(userId);
+		fillIsDueDatePassed(rents);
+		return rents;
 	}
 
 	@Override
@@ -173,7 +181,9 @@ public class RentServiceImpl implements RentService{
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		c.add(Calendar.DATE, noOfDays);
-		return rentJpaRepository.findByIsClosedFalseAndDueDateBefore(c
-				.getTime());
+		List<Rent> rents = rentJpaRepository
+				.findByIsClosedFalseAndDueDateBefore(c.getTime());
+		fillIsDueDatePassed(rents);
+		return rents;
 	}
 }

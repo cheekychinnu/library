@@ -9,6 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.assertj.core.util.DateUtil;
+
+import com.foo.library.util.Util;
+
 @Entity
 public class Rent {
 
@@ -24,27 +28,25 @@ public class Rent {
 	private Date dueDate;
 	private Date actualReturnDate;
 	private Boolean isClosed = false;
-	
-	@Transient
-	private Boolean isDueDatePassed;
 
-	public Rent()
-	{
+	@Transient
+	private boolean isDueDatePassed;
+	
+	public Rent() {
 		super();
 	}
-	
-	public Rent(String userId, Date issuedDate, Date dueDate)
-	{
+
+	public Rent(String userId, Date issuedDate, Date dueDate) {
 		this.userId = userId;
 		this.issuedDate = issuedDate;
 		this.dueDate = dueDate;
 	}
-	
-	public Boolean getIsDueDatePassed() {
+
+	public boolean isDueDatePassed() {
 		return isDueDatePassed;
 	}
 
-	public void setIsDueDatePassed(Boolean isDueDatePassed) {
+	public void setDueDatePassed(boolean isDueDatePassed) {
 		this.isDueDatePassed = isDueDatePassed;
 	}
 
@@ -124,10 +126,10 @@ public class Rent {
 		result = prime * result
 				+ ((issuedDate == null) ? 0 : issuedDate.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((dueDate == null) ? 0 : dueDate.hashCode());
+		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		result = prime * result + ((isClosed == null) ? 0 : isClosed.hashCode());
+		result = prime * result
+				+ ((isClosed == null) ? 0 : isClosed.hashCode());
 		return result;
 	}
 

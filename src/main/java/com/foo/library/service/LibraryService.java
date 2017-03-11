@@ -10,6 +10,7 @@ import com.foo.library.model.Rent;
 import com.foo.library.model.RentResponse;
 import com.foo.library.model.ReturnResponse;
 import com.foo.library.model.Subscriber;
+import com.foo.library.model.Watcher;
 
 public interface LibraryService {
 	
@@ -61,4 +62,8 @@ public interface LibraryService {
 	List<Rent> getOpenRents(String userId);
 	
 	List<Rent> getRentsDueIn(Integer noOfDays);
+	
+	void watchForBookCatalog(String userId, Long bookCatalogId);
+
+	List<Watcher> getWatchers(Long bookCatalogId);
 }

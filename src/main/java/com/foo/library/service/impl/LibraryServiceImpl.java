@@ -13,6 +13,7 @@ import com.foo.library.model.Rent;
 import com.foo.library.model.RentResponse;
 import com.foo.library.model.ReturnResponse;
 import com.foo.library.model.Subscriber;
+import com.foo.library.model.Watcher;
 import com.foo.library.service.BookService;
 import com.foo.library.service.LibraryService;
 import com.foo.library.service.RatingAndReviewService;
@@ -156,6 +157,16 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public List<Rent> getRentsDueIn(Integer noOfDays) {
 		return rentService.getRentsDueIn(noOfDays);
+	}
+
+	@Override
+	public void watchForBookCatalog(String userId, Long bookCatalogId) {
+		subscriptionService.watchForBookCatalog(userId, bookCatalogId);		
+	}
+
+	@Override
+	public List<Watcher> getWatchers(Long bookCatalogId) {
+		return subscriptionService.getWatchers(bookCatalogId);
 	}
 
 }
