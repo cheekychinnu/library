@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class Rent {
@@ -23,6 +24,9 @@ public class Rent {
 	private Date dueDate;
 	private Date actualReturnDate;
 	private Boolean isClosed = false;
+	
+	@Transient
+	private Boolean isDueDatePassed;
 
 	public Rent()
 	{
@@ -36,7 +40,14 @@ public class Rent {
 		this.dueDate = dueDate;
 	}
 	
-	
+	public Boolean getIsDueDatePassed() {
+		return isDueDatePassed;
+	}
+
+	public void setIsDueDatePassed(Boolean isDueDatePassed) {
+		this.isDueDatePassed = isDueDatePassed;
+	}
+
 	public Boolean getIsClosed() {
 		return isClosed;
 	}
