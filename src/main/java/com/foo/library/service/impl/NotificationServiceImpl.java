@@ -35,6 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void notifyWatchers(Long bookCatalogId) {
 		List<Watcher> watchers = libraryService.getWatchers(bookCatalogId);
+		@SuppressWarnings("unused")
 		List<String> usersToNotify = watchers.stream()
 				.map(w -> w.getId().getUserId()).collect(Collectors.toList());
 		// send mail to all the watchers
@@ -43,6 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void notifyUpcomingDueDates() {
 		List<Rent> rentsDueIn = libraryService.getRentsDueIn(7);
+		@SuppressWarnings("unused")
 		Map<String, List<Rent>> userIdToRentsMap = rentsDueIn.stream().collect(
 				Collectors.groupingBy(r -> r.getUserId()));
 		// notify each user with upcoming dues.

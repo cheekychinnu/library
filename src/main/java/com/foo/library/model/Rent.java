@@ -9,10 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import org.assertj.core.util.DateUtil;
-
-import com.foo.library.util.Util;
-
 @Entity
 public class Rent {
 
