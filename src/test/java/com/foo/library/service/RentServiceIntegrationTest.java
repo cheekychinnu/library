@@ -127,11 +127,6 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 	}
 
 	@Test
-	public void testMarkPenaltyAsPaid() {
-		// TODO
-	}
-
-	@Test
 	public void testGetAllRents() {
 		String author = "J.K.Rowling";
 		String isbn = "129847874";
@@ -233,11 +228,6 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 	}
 
 	@Test
-	public void testRentsDueInWithRentOverdue() {
-		// TODO
-	}
-
-	@Test
 	public void testRentsDueIn() {
 		String author = "J.K.Rowling";
 		String isbn = "129847874";
@@ -266,11 +256,6 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 		assertFalse(rentsDueIn.isEmpty());
 		assertFalse(rentsDueIn.get(0).getIsClosed());
 		assertFalse(rentsDueIn.get(0).isDueDatePassed());
-	}
-
-	@Test
-	public void testReturnBookAfterDueDate() {
-		// TODO
 	}
 
 	@Test
