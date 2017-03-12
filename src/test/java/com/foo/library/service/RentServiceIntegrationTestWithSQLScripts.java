@@ -25,7 +25,7 @@ public class RentServiceIntegrationTestWithSQLScripts extends
 	private RentService rentService;
 
 	@Test
-	@SqlGroup({ @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:beforeRentServiceTest.sql") })
+	@Sql("classpath:beforeRentServiceTest.sql")
 	public void testRentsDueInWithRentOverdue() {
 		List<Rent> rentsDueIn = rentService.getRentsDueIn(7);
 		Long rentId = 100L;
@@ -37,7 +37,7 @@ public class RentServiceIntegrationTestWithSQLScripts extends
 	}
 
 	@Test
-	@SqlGroup({ @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:beforeRentServiceTest.sql") })
+	@Sql("classpath:beforeRentServiceTest.sql")
 	public void testReturnBookAfterDueDate() {
 		Long rentId = 100L;
 		Long bookId = 100L;
