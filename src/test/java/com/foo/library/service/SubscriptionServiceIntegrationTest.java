@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.foo.library.model.BookCatalog;
 import com.foo.library.model.Subscriber;
+import com.foo.library.model.Watcher;
 
 public class SubscriptionServiceIntegrationTest extends BaseIntegrationTest {
 	
@@ -36,6 +37,25 @@ public class SubscriptionServiceIntegrationTest extends BaseIntegrationTest {
 		BookCatalog bookCatalog = constructBookCatalog(bookName, author, isbn);
 		// for now testing if the sysout gets printed
 		bookService.addBookCatalogToLibrary(bookCatalog);
+	}
+	
+	@Test
+	public void testWatchers()
+	{
+		String author = "J.K.Rowling";
+		String isbn = "129847874";
+		String bookName = "Harry Potter And The Prisoner Of Azkhaban";
+		BookCatalog bookCatalog = constructBookCatalog(bookName, author, isbn);
+		BookCatalog addBookCatalogToLibrary = bookService.addBookCatalogToLibrary(bookCatalog);
+		
+		String userId = "chinnu";
+		Long bookCatalogId  = addBookCatalogToLibrary.getId();
+		subscriptionService.watchForBookCatalog(userId, bookCatalogId);
+		
+		List<Watcher> watchers = subscriptionService.getWatchers(bookCatalogId);
+		assertNotNull(watchers);
+		assertEquals(1, watchers.size());
+		assertEquals(userId, watchers.get(0).getId().getUserId());
 	}
 	
 	private BookCatalog constructBookCatalog(String bookName, String author,

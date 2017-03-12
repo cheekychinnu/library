@@ -44,6 +44,10 @@ public interface LibraryService {
 	
 	RentResponse rentBook(String userId, Long bookId);
 	
+	void watchForBookCatalog(String userId, Long bookCatalogId);
+
+	List<Watcher> getWatchers(Long bookCatalogId);
+	
 	// pending test cases :
 	ReturnResponse returnBook(Long rentId, Long bookId);
 	
@@ -63,7 +67,4 @@ public interface LibraryService {
 	
 	List<Rent> getRentsDueIn(Integer noOfDays);
 	
-	void watchForBookCatalog(String userId, Long bookCatalogId);
-
-	List<Watcher> getWatchers(Long bookCatalogId);
 }
