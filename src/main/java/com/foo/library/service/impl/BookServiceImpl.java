@@ -52,6 +52,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<BookCatalog> searchBookCatalogByIsbn(String isbn) {
+		entityManager.clear();
 		return bookCatalogJpaRepository.findByIsbn(isbn);
 	}
 
@@ -63,12 +64,14 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<BookCatalog> searchBookCatalogByAuthor(String author) {
+		entityManager.clear();
 		return bookCatalogJpaRepository
 				.findByAuthorContainingIgnoreCase(author);
 	}
 
 	@Override
 	public List<BookCatalog> searchBookCatalogByBookName(String name) {
+		entityManager.clear();
 		return bookCatalogJpaRepository.findByNameContainingIgnoreCase(name);
 	}
 

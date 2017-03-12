@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.assertj.core.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +36,9 @@ public class RentServiceImpl implements RentService {
 	@Autowired
 	private RentJpaRepository rentJpaRepository;
 
+	@PersistenceContext
+	private EntityManager entityManager;
+	
 	@Autowired
 	private PenaltyJpaRepository penaltyJpaRepository;
 
@@ -74,9 +80,9 @@ public class RentServiceImpl implements RentService {
 		// native library.
 		// I will revisit this once I migrate this
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(issuedDate.getYear(), issuedDate.getMonth(), 1);
-		calendar.set(GregorianCalendar.DAY_OF_WEEK, Calendar.FRIDAY);
-		calendar.set(GregorianCalendar.DAY_OF_WEEK_IN_MONTH, -1);
+		calendar.setTime(issuedDate);
+		calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+		calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, -1);
 		return calendar.getTime();
 	}
 
@@ -151,6 +157,7 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	public List<Rent> getOpenRents(String userId) {
+		entityManager.clear();
 		List<Rent> openRents = rentJpaRepository
 				.findByUserIdAndIsClosedFalse(userId);
 		fillIsDueDatePassed(openRents);
@@ -171,6 +178,7 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	public List<Rent> getAllRents(String userId) {
+		entityManager.clear();
 		List<Rent> rents = rentJpaRepository.findByUserId(userId);
 		fillIsDueDatePassed(rents);
 		return rents;
@@ -181,6 +189,7 @@ public class RentServiceImpl implements RentService {
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		c.add(Calendar.DATE, noOfDays);
+		entityManager.clear();
 		List<Rent> rents = rentJpaRepository
 				.findByIsClosedFalseAndDueDateBefore(c.getTime());
 		fillIsDueDatePassed(rents);
