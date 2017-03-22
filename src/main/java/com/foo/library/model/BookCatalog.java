@@ -3,7 +3,9 @@ package com.foo.library.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,14 +16,14 @@ import javax.persistence.Transient;
 public class BookCatalog {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	private String name;
 	private String author;
 	private String isbn;
 	
-	@OneToMany(mappedBy="bookCatalog")
+	@OneToMany(mappedBy="bookCatalog", fetch=FetchType.EAGER)
 	private List<Book> books = new ArrayList<>();
 	
 	@Transient
