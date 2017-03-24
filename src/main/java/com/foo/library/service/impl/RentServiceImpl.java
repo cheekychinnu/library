@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.assertj.core.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class RentServiceImpl implements RentService {
 	private NotificationService notificationService;
 
 	@Override
+	@Transactional
 	public RentResponse rentBook(String userId, Long bookId) {
 
 		Date issuedDate = DateUtil.now();
@@ -87,6 +89,7 @@ public class RentServiceImpl implements RentService {
 	}
 
 	@Override
+	@Transactional
 	public ReturnResponse returnBook(Long rentId, Long bookId) {
 		
 		bookJpaRepository.updateIsAvailable(bookId, true);
@@ -135,26 +138,27 @@ public class RentServiceImpl implements RentService {
 		entityManager.refresh(penalty);
 	}
 
+	@Transactional
 	@Override
 	public void logMissingBook(Long rentId) {
 		Rent rent = rentJpaRepository.findOne(rentId);
 		Long bookId = rent.getBook().getId();
-		
-		Penalty penalty = new Penalty(rentId, PenaltyReason.LOST,
-				PenaltyStatus.PENDING);
-		penalty.setType(PenaltyType.CONTRIBUTION);
-		penalty = penaltyJpaRepository.saveAndFlush(penalty);
-
 		bookJpaRepository.updateIsActiveAndIsAvailable(bookId,
 				false, false);
 		
 		rentJpaRepository.markAsClosed(rentId);
 		entityManager.refresh(rent);
 		
+		Penalty penalty = new Penalty(rentId, PenaltyReason.LOST,
+				PenaltyStatus.PENDING);
+		penalty.setType(PenaltyType.CONTRIBUTION);
+		penalty = penaltyJpaRepository.saveAndFlush(penalty);
+
 		// I guess here it is important to refresh rent and then the penalty. why? 
 		entityManager.refresh(penalty); // refreshing penalty -> rent -> book -> bookCatalog
 	}
 
+	@Transactional
 	@Override
 	public void markPenaltyAsContributed(Long rentId, Long bookId) {
 		penaltyJpaRepository.updateContribution(rentId, bookId);

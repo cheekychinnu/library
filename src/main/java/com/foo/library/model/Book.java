@@ -2,15 +2,19 @@ package com.foo.library.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.foo.library.repository.LibraryEntityListener;
+
 /**
  * @author Vinodhini
  *
  */
+@EntityListeners({LibraryEntityListener.class})
 @Entity
 public class Book {
 
