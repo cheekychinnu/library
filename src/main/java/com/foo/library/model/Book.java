@@ -18,7 +18,7 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@ManyToOne(cascade=CascadeType.REFRESH)
+	@ManyToOne(cascade={CascadeType.REFRESH})
 	private BookCatalog bookCatalog;
 
 	private String provider;

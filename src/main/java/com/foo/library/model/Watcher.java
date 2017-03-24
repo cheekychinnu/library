@@ -2,6 +2,7 @@ package com.foo.library.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -85,7 +86,7 @@ public class Watcher {
 	@EmbeddedId
 	private WatcherPK id;
 
-	@OneToOne
+	@OneToOne(cascade={CascadeType.REFRESH})
 	@JoinColumn(name = "book_catalog_id", referencedColumnName = "id", insertable = false, updatable = false)
 	private BookCatalog bookCatalog;
 

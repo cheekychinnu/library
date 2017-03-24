@@ -2,6 +2,9 @@ package com.foo.library.service.impl;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +25,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	@Autowired
 	private WatcherJpaRepository watcherJpaRepository;
 	
+	@PersistenceContext
+	private EntityManager entityManager;
+	
 	@Override
 	public void subscribeForNewAdditions(String userId) {
 		Subscriber subscriber = new Subscriber(userId,
 				EventType.NEW_BOOK_CATALOG);
-		subscriberJpaRepository.saveAndFlush(subscriber);
+		subscriber  = subscriberJpaRepository.saveAndFlush(subscriber);
+		entityManager.refresh(subscriber);
 	}
 
 	@Override
@@ -40,7 +47,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		WatcherPK watcherPK = new WatcherPK(userId, bookCatalogId);
 		Watcher watcher = new Watcher();
 		watcher.setId(watcherPK);
-		watcherJpaRepository.saveAndFlush(watcher);
+		watcher = watcherJpaRepository.saveAndFlush(watcher);
+		entityManager.refresh(watcher);
 	}
 
 	@Override

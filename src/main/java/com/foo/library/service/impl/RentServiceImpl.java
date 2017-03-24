@@ -62,6 +62,7 @@ public class RentServiceImpl implements RentService {
 				rent = rentJpaRepository.saveAndFlush(rent);
 				bookJpaRepository.updateIsAvailable(bookId, false);
 				rentResponse = new RentResponse(rent);
+				entityManager.refresh(rent); // refreshing rent -> book -> bookCatalog
 			} else {
 				rentResponse = new RentResponse();
 				rentResponse
@@ -87,6 +88,7 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	public ReturnResponse returnBook(Long rentId, Long bookId) {
+		
 		bookJpaRepository.updateIsAvailable(bookId, true);
 		Date returnDate = DateUtil.now();
 		rentJpaRepository.updateActualReturnDateAndMarkAsClosed(rentId,
@@ -95,14 +97,22 @@ public class RentServiceImpl implements RentService {
 		ReturnResponse returnResponse;
 		boolean isDueDatePassed = Util.isDueDatePassed(rent.getDueDate(),
 				returnDate);
+		Penalty penalty = null;
 		if (isDueDatePassed) {
-			Penalty penalty = enterPenaltyForMissingDueDate(rent);
+			penalty = enterPenaltyForMissingDueDate(rent);
 			returnResponse = new ReturnResponse(penalty);
 		} else {
 			returnResponse = new ReturnResponse();
 		}
 		Long bookCatalogId = rent.getBook().getBookCatalog().getId();
 		notificationService.notifyWatchers(bookCatalogId);
+		
+		if(penalty != null){
+			entityManager.refresh(penalty); // this will refresh penalty -> rent -> book -> bookCatalog
+		}
+		else{
+			entityManager.refresh(rent); // this will refresh rent -> book -> bookCatalog
+		}
 		return returnResponse;
 	}
 
@@ -121,26 +131,36 @@ public class RentServiceImpl implements RentService {
 	@Override
 	public void markPenaltyAsPaid(Long rentId) {
 		penaltyJpaRepository.updateStatus(rentId, PenaltyStatus.DONE);
+		Penalty penalty = penaltyJpaRepository.findOne(rentId);
+		entityManager.refresh(penalty);
 	}
 
 	@Override
 	public void logMissingBook(Long rentId) {
+		Rent rent = rentJpaRepository.findOne(rentId);
+		Long bookId = rent.getBook().getId();
+		
 		Penalty penalty = new Penalty(rentId, PenaltyReason.LOST,
 				PenaltyStatus.PENDING);
 		penalty.setType(PenaltyType.CONTRIBUTION);
 		penalty = penaltyJpaRepository.saveAndFlush(penalty);
 
-		rentJpaRepository.markAsClosed(rentId);
-
-		Rent rent = rentJpaRepository.findOne(rentId);
-		bookJpaRepository.updateIsActiveAndIsAvailable(rent.getBook().getId(),
+		bookJpaRepository.updateIsActiveAndIsAvailable(bookId,
 				false, false);
+		
+		rentJpaRepository.markAsClosed(rentId);
+		entityManager.refresh(rent);
+		
+		// I guess here it is important to refresh rent and then the penalty. why? 
+		entityManager.refresh(penalty); // refreshing penalty -> rent -> book -> bookCatalog
 	}
 
 	@Override
 	public void markPenaltyAsContributed(Long rentId, Long bookId) {
 		penaltyJpaRepository.updateContribution(rentId, bookId);
 		penaltyJpaRepository.updateStatus(rentId, PenaltyStatus.DONE);
+		Penalty penalty = penaltyJpaRepository.findOne(rentId);
+		entityManager.refresh(penalty);
 	}
 
 	@Override
@@ -152,11 +172,12 @@ public class RentServiceImpl implements RentService {
 	@Override
 	public void markPenaltyAsSuspended(Long rentId) {
 		penaltyJpaRepository.updateStatus(rentId, PenaltyStatus.SUSPENDED);
+		Penalty penalty = penaltyJpaRepository.findOne(rentId);
+		entityManager.refresh(penalty);
 	}
 
 	@Override
 	public List<Rent> getOpenRents(String userId) {
-		entityManager.clear();
 		List<Rent> openRents = rentJpaRepository
 				.findByUserIdAndIsClosedFalse(userId);
 		fillIsDueDatePassed(openRents);
@@ -177,7 +198,6 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	public List<Rent> getAllRents(String userId) {
-		entityManager.clear();
 		List<Rent> rents = rentJpaRepository.findByUserId(userId);
 		fillIsDueDatePassed(rents);
 		return rents;
@@ -188,7 +208,6 @@ public class RentServiceImpl implements RentService {
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		c.add(Calendar.DATE, noOfDays);
-		entityManager.clear();
 		List<Rent> rents = rentJpaRepository
 				.findByIsClosedFalseAndDueDateBefore(c.getTime());
 		fillIsDueDatePassed(rents);

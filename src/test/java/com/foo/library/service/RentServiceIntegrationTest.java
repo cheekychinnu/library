@@ -103,6 +103,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 		allRents = allRents.stream().filter(r -> r.getId().equals(rentId))
 				.collect(Collectors.toList());
 		assertFalse(allRents.isEmpty());
+		assertEquals(1, allRents.size());
 		assertTrue(allRents.get(0).getIsClosed());
 
 		assertBookCatalogAvailability(addBookCatalogToLibrary.getId(), false);

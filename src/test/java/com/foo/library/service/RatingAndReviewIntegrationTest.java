@@ -58,6 +58,7 @@ public class RatingAndReviewIntegrationTest extends BaseIntegrationTest {
 		assertEquals(userId1, ratingAndReviewsForUser.get(0).getId()
 				.getUserId());
 		assertEquals(rating, ratingAndReviewsForUser.get(0).getRating());
+		assertEquals(review,ratingAndReviewsForUser.get(0).getReview());
 
 		List<BookCatalog> catalogs = bookService
 				.getAllBookCatalogsWithRatingsAndAvailability();
@@ -79,6 +80,7 @@ public class RatingAndReviewIntegrationTest extends BaseIntegrationTest {
 		assertEquals(1, ratingAndReviewsForUser.size());
 		assertEquals(userId2, ratingAndReviewsForUser.get(0).getId()
 				.getUserId());
+		assertEquals(new Integer(4), ratingAndReviewsForUser.get(0).getRating());
 		assertEquals(updatedReview, ratingAndReviewsForUser.get(0).getReview());
 	}
 

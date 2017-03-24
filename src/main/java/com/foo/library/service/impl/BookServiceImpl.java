@@ -48,7 +48,7 @@ public class BookServiceImpl implements BookService {
 		BookCatalog bookCatalog = bookCatalogJpaRepository.findOne(bookCatalogId);
 		book.setBookCatalog(bookCatalog);
 		book = bookJpaRepository.saveAndFlush(book);
-		entityManager.refresh(book);
+		entityManager.refresh(book); // refreshing book will refresh bookCatalog
 		return book;
 	}
 

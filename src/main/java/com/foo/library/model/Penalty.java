@@ -1,5 +1,6 @@
 package com.foo.library.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,7 +17,7 @@ public class Penalty {
 	@Column(name = "rent_id")
 	private Long rentId;
 
-	@OneToOne
+	@OneToOne(cascade={CascadeType.REFRESH})
 	@JoinColumn(name = "rent_id", referencedColumnName = "id", insertable = false, updatable = false)
 	private Rent rent;
 
@@ -34,7 +35,7 @@ public class Penalty {
 	@Column(name = "book_id")
 	private Long bookId;
 
-	@ManyToOne
+	@ManyToOne(cascade={CascadeType.REFRESH})
 	@JoinColumn(name = "book_id", referencedColumnName = "id", insertable = false, updatable = false)
 	private Book book;
 

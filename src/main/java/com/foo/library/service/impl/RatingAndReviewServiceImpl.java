@@ -2,6 +2,9 @@ package com.foo.library.service.impl;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +16,9 @@ import com.foo.library.service.RatingAndReviewService;
 @Component
 public class RatingAndReviewServiceImpl implements RatingAndReviewService {
 
+	@PersistenceContext
+	private EntityManager entityManager;
+	
 	@Autowired
 	private RatingAndReviewJpaRepository ratingAndReviewJpaRepository;
 
@@ -22,25 +28,33 @@ public class RatingAndReviewServiceImpl implements RatingAndReviewService {
 
 		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId,
 				bookCatalogId);
-
 		RatingAndReview ratingAndReview = new RatingAndReview();
 		ratingAndReview.setRating(rating);
 		ratingAndReview.setReview(review);
 		ratingAndReview.setId(ratingAndReviewPK);
 
-		ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
+		ratingAndReview = ratingAndReviewJpaRepository.saveAndFlush(ratingAndReview);
+		entityManager.refresh(ratingAndReview); // refreshing this will refresh bookCatalog
 	}
 
 	@Override
 	public void updateRating(Long bookCatalogId, String userId, Integer rating) {
 		ratingAndReviewJpaRepository.updateUserRatingForBook(userId,
 				bookCatalogId, rating);
+		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId,
+				bookCatalogId);
+		RatingAndReview ratingAndReview = ratingAndReviewJpaRepository.findOne(ratingAndReviewPK);
+		entityManager.refresh(ratingAndReview);
 	}
 
 	@Override
 	public void updateReview(Long bookCatalogId, String userId, String review) {
 		ratingAndReviewJpaRepository.updateUserReviewForBook(userId,
 				bookCatalogId, review);
+		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId,
+				bookCatalogId);
+		RatingAndReview ratingAndReview = ratingAndReviewJpaRepository.findOne(ratingAndReviewPK);
+		entityManager.refresh(ratingAndReview);
 	}
 
 	@Override

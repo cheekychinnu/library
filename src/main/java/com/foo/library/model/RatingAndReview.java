@@ -1,5 +1,6 @@
 package com.foo.library.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -11,7 +12,7 @@ public class RatingAndReview {
 	@EmbeddedId
 	private RatingAndReviewPK id;
 	
-	@OneToOne
+	@OneToOne(cascade=CascadeType.REFRESH)
 	@JoinColumn(name="book_catalog_id", referencedColumnName="id", insertable=false, updatable=false)
 	private BookCatalog bookCatalog; 
 	
