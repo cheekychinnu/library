@@ -1,5 +1,6 @@
 package com.foo.library.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +18,7 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.REFRESH)
 	private BookCatalog bookCatalog;
 
 	private String provider;

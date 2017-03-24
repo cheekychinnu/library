@@ -38,46 +38,43 @@ public class BookServiceImpl implements BookService {
 	public BookCatalog addBookCatalogToLibrary(BookCatalog bookCatalog) {
 		BookCatalog catalog = bookCatalogJpaRepository
 				.saveAndFlush(bookCatalog);
+		entityManager.refresh(bookCatalog);
 		notificationService.notifySubscriberForNewAddition(catalog);
 		return catalog;
 	}
 
 	@Override
 	public Book addBookToTheCatalog(Long bookCatalogId, Book book) {
-		BookCatalog bookCatalog = new BookCatalog();
-		bookCatalog.setId(bookCatalogId);
+		BookCatalog bookCatalog = bookCatalogJpaRepository.findOne(bookCatalogId);
 		book.setBookCatalog(bookCatalog);
-		return bookJpaRepository.saveAndFlush(book);
+		book = bookJpaRepository.saveAndFlush(book);
+		entityManager.refresh(book);
+		return book;
 	}
 
 	@Override
 	public List<BookCatalog> searchBookCatalogByIsbn(String isbn) {
-		entityManager.clear();
 		return bookCatalogJpaRepository.findByIsbn(isbn);
 	}
 
 	@Override
 	public List<BookCatalog> getAllBookCatalogs() {
-		entityManager.clear();
 		return bookCatalogJpaRepository.findAll();
 	}
 
 	@Override
 	public List<BookCatalog> searchBookCatalogByAuthor(String author) {
-		entityManager.clear();
 		return bookCatalogJpaRepository
 				.findByAuthorContainingIgnoreCase(author);
 	}
 
 	@Override
 	public List<BookCatalog> searchBookCatalogByBookName(String name) {
-		entityManager.clear();
 		return bookCatalogJpaRepository.findByNameContainingIgnoreCase(name);
 	}
 
 	@Override
 	public List<BookCatalog> getAllBookCatalogsWithRatingsAndAvailability() {
-		entityManager.clear();
 
 		List<BookCatalog> allCatalogs = bookCatalogJpaRepository.findAll();
 
