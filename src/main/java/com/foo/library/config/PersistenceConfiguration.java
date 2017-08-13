@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 @Configuration
-public class PersistenceConfiguration {
+public class PersistenceConfiguration  {
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.datasource")
