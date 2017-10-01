@@ -18,6 +18,7 @@ public class UserServiceIntegrationTest extends BaseIntegrationTest{
 		userService.register(user);
 		User user2 = userService.getUser(user.getId(), user.getPassword());
 		assertNotNull(user2);
+		user.setPassword(null);
 		assertEquals(user, user2);
 	}
 	

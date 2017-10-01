@@ -31,6 +31,16 @@ public class User {
 		this.lastName = lastName;
 	}
 
+	public User(String id, String emailId, 
+			String firstName, String lastName) {
+		super();
+		this.id = id;
+		this.emailId = emailId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	
 	public String getId() {
 		return id;
 	}

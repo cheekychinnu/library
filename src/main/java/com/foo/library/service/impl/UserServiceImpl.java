@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService{
 	
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
 	@Transactional
 	@Override
 	public void register(User user) {
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User getUser(String userId, String password) {
-		List<User> findByIdAndPassword = userJpaRepository.findByIdAndPassword(userId, password);
+		List<User> findByIdAndPassword = userJpaRepository.queryByIdAndPassword(userId, password);
 		if (findByIdAndPassword.size() == 1){
 			return findByIdAndPassword.get(0);
 		} 

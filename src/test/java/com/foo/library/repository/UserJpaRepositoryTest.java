@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.foo.library.model.User;
@@ -15,6 +16,9 @@ import com.foo.library.model.User;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserJpaRepositoryTest {
+
+	@Autowired
+	private TestEntityManager entityManager;
 
 	@Autowired
 	private UserJpaRepository userJpaRepository;
@@ -34,12 +38,15 @@ public class UserJpaRepositoryTest {
 		assertNotNull(savedUser);
 		assertEquals(user, savedUser);
 		savedUser = userJpaRepository.saveAndFlush(user);
+		entityManager.clear();
+		
 		String id = user.getId();
 		String password = user.getPassword();
-		List<User> findByIdAndPassword = userJpaRepository.findByIdAndPassword(
+		List<User> findByIdAndPassword = userJpaRepository.queryByIdAndPassword(
 				id, password);
 		assertNotNull(findByIdAndPassword);
 		assertEquals(1, findByIdAndPassword.size());
+		assertNull(findByIdAndPassword.get(0).getPassword());
 	}
 
 	@Test
@@ -61,7 +68,7 @@ public class UserJpaRepositoryTest {
 		String password = user.getPassword();
 
 		userJpaRepository.saveAndFlush(user);
-		List<User> findByIdAndPassword = userJpaRepository.findByIdAndPassword(
+		List<User> findByIdAndPassword = userJpaRepository.queryByIdAndPassword(
 				id, password);
 		assertNotNull(findByIdAndPassword);
 		assertEquals(1, findByIdAndPassword.size());
