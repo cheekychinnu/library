@@ -4,5 +4,5 @@ import com.foo.library.model.User;
 
 public interface UserService {
 	void register(User user);
-	boolean isValidLogin(String userId, String password);
+	User getUser(String userId, String password);
 }

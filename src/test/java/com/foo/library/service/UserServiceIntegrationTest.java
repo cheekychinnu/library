@@ -16,8 +16,9 @@ public class UserServiceIntegrationTest extends BaseIntegrationTest{
 	public void testRegisterForFirstTime(){
 		User user = getUser();
 		userService.register(user);
-		boolean validLogin = userService.isValidLogin(user.getId(), user.getPassword());
-		assertTrue(validLogin);
+		User user2 = userService.getUser(user.getId(), user.getPassword());
+		assertNotNull(user2);
+		assertEquals(user, user2);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

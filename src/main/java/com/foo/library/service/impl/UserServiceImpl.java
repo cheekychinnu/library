@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.foo.library.model.User;
 import com.foo.library.repository.UserJpaRepository;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService{
 	@PersistenceContext
 	private EntityManager entityManager;
 	
+	@Transactional
 	@Override
 	public void register(User user) {
 		boolean exists = userJpaRepository.exists(user.getId());
@@ -32,12 +34,12 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public boolean isValidLogin(String userId, String password) {
+	public User getUser(String userId, String password) {
 		List<User> findByIdAndPassword = userJpaRepository.findByIdAndPassword(userId, password);
 		if (findByIdAndPassword.size() == 1){
-			return true;
+			return findByIdAndPassword.get(0);
 		} 
-		return false;
+		return null;
 	}
 
 }
