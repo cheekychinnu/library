@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class HomeController {
-
+	
 	@RequestMapping("/")
 	public String welcome(Model model){
 		model.addAttribute("welcomeMessage","Welcome to the library!");
