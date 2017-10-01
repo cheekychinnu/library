@@ -9,6 +9,7 @@
 <title>Register</title>
 </head>
 <body>
+	${registrationError}
 	<div class="container">
 		<form:form name="input" method="post" action="register"
 			modelAttribute="user">

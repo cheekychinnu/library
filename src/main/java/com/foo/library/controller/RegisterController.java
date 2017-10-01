@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -33,11 +34,16 @@ public class RegisterController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String register(@ModelAttribute("user") @Valid User user,
-			BindingResult result) {
+			BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			return "register";
 		}
-		userService.register(user);
+		try {
+			userService.register(user);
+		} catch (IllegalArgumentException e) {
+			model.addAttribute("registrationError", e.getMessage());
+			return "register";
+		}
 		return "redirect:/login";
 	}
 
