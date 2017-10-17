@@ -14,10 +14,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		String loginUrl = request.getContextPath() + "/login";
 		if(request.getSession().getAttribute("loggedInUser") == null) {
-			FlashMap flashMap = new FlashMap();
-			flashMap.put("loginError", "Please login to continue");
-			FlashMapManager flashMapManager = RequestContextUtils.getFlashMapManager(request);
-			flashMapManager.saveOutputFlashMap(flashMap, request, response);
+			FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
+			outputFlashMap.put("loginError", "Please login to continue");
+			//New utility added in Spring 5
+			RequestContextUtils.saveOutputFlashMap(loginUrl, request, response);
 			response.sendRedirect(loginUrl);
 			return false;
 		}
