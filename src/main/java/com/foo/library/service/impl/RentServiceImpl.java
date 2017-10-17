@@ -1,8 +1,11 @@
 package com.foo.library.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -49,7 +52,7 @@ public class RentServiceImpl implements RentService {
 	@Transactional
 	public RentResponse rentBook(String userId, Long bookId) {
 
-		Date issuedDate = DateUtil.now();
+		Date issuedDate = getToday();
 		Date dueDate = computeDueDate(issuedDate);
 		Rent rent = new Rent(userId, issuedDate, dueDate);
 
@@ -58,7 +61,8 @@ public class RentServiceImpl implements RentService {
 		// since this is a singleton bean, "this" is sufficient monitor object
 		synchronized (this) {
 
-			Book book = bookJpaRepository.findOne(bookId);
+			Optional<Book> bookOptional= bookJpaRepository.findById(bookId);
+			Book book = bookOptional.get();
 			if (book.getIsAvailable()) {
 				rent.setBook(book);
 				rent = rentJpaRepository.saveAndFlush(rent);
@@ -75,6 +79,11 @@ public class RentServiceImpl implements RentService {
 		}
 
 		return rentResponse;
+	}
+
+	private Date getToday() {
+		LocalDateTime now = LocalDateTime.now();
+		return Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	private Date computeDueDate(Date issuedDate) {
@@ -134,14 +143,15 @@ public class RentServiceImpl implements RentService {
 	@Override
 	public void markPenaltyAsPaid(Long rentId) {
 		penaltyJpaRepository.updateStatus(rentId, PenaltyStatus.DONE);
-		Penalty penalty = penaltyJpaRepository.findOne(rentId);
-		entityManager.refresh(penalty);
+		Optional<Penalty> penalty = penaltyJpaRepository.findById(rentId);
+		entityManager.refresh(penalty.get());
 	}
 
 	@Transactional
 	@Override
 	public void logMissingBook(Long rentId) {
-		Rent rent = rentJpaRepository.findOne(rentId);
+		Optional<Rent> rentOptional = rentJpaRepository.findById(rentId);
+		Rent rent = rentOptional.get();
 		Long bookId = rent.getBook().getId();
 		bookJpaRepository.updateIsActiveAndIsAvailable(bookId,
 				false, false);
@@ -163,8 +173,8 @@ public class RentServiceImpl implements RentService {
 	public void markPenaltyAsContributed(Long rentId, Long bookId) {
 		penaltyJpaRepository.updateContribution(rentId, bookId);
 		penaltyJpaRepository.updateStatus(rentId, PenaltyStatus.DONE);
-		Penalty penalty = penaltyJpaRepository.findOne(rentId);
-		entityManager.refresh(penalty);
+		Optional<Penalty> penalty = penaltyJpaRepository.findById(rentId);
+		entityManager.refresh(penalty.get());
 	}
 
 	@Override
@@ -176,8 +186,8 @@ public class RentServiceImpl implements RentService {
 	@Override
 	public void markPenaltyAsSuspended(Long rentId) {
 		penaltyJpaRepository.updateStatus(rentId, PenaltyStatus.SUSPENDED);
-		Penalty penalty = penaltyJpaRepository.findOne(rentId);
-		entityManager.refresh(penalty);
+		Optional<Penalty> penalty = penaltyJpaRepository.findById(rentId);
+		entityManager.refresh(penalty.get());
 	}
 
 	@Override
@@ -189,7 +199,7 @@ public class RentServiceImpl implements RentService {
 	}
 
 	private void fillIsDueDatePassed(List<Rent> rents) {
-		Date currentDate = DateUtil.now();
+		Date currentDate = getToday(); 
 		for (Rent r : rents) {
 			Date dueDate = r.getDueDate();
 			if (dueDate == null) {

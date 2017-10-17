@@ -53,10 +53,10 @@ public class UserJpaRepositoryTest {
 	public void testExists() {
 		User user = getUser();
 		String id = user.getId();
-		boolean exists = userJpaRepository.exists(id);
+		boolean exists = userJpaRepository.existsById(id);
 		assertFalse(exists);
 		userJpaRepository.saveAndFlush(user);
-		exists = userJpaRepository.exists(id);
+		exists = userJpaRepository.existsById(id);
 		assertTrue(exists);
 	}
 

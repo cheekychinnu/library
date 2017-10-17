@@ -1,6 +1,7 @@
 package com.foo.library.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -43,8 +44,8 @@ public class RatingAndReviewServiceImpl implements RatingAndReviewService {
 				bookCatalogId, rating);
 		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId,
 				bookCatalogId);
-		RatingAndReview ratingAndReview = ratingAndReviewJpaRepository.findOne(ratingAndReviewPK);
-		entityManager.refresh(ratingAndReview);
+		Optional<RatingAndReview> ratingAndReview = ratingAndReviewJpaRepository.findById(ratingAndReviewPK);
+		entityManager.refresh(ratingAndReview.get());
 	}
 
 	@Override
@@ -53,8 +54,8 @@ public class RatingAndReviewServiceImpl implements RatingAndReviewService {
 				bookCatalogId, review);
 		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId,
 				bookCatalogId);
-		RatingAndReview ratingAndReview = ratingAndReviewJpaRepository.findOne(ratingAndReviewPK);
-		entityManager.refresh(ratingAndReview);
+		Optional<RatingAndReview> ratingAndReview = ratingAndReviewJpaRepository.findById(ratingAndReviewPK);
+		entityManager.refresh(ratingAndReview.get());
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService{
 	@Transactional
 	@Override
 	public void register(User user) {
-		boolean exists = userJpaRepository.exists(user.getId());
+		boolean exists = userJpaRepository.existsById(user.getId());
 		if(exists) {
 			throw new IllegalArgumentException(user.getId()+" already exists");
 		}

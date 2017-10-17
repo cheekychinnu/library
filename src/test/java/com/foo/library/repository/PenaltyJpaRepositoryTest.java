@@ -3,6 +3,7 @@ package com.foo.library.repository;
 import static org.junit.Assert.*;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.assertj.core.util.DateUtil;
 import org.junit.Test;
@@ -46,11 +47,12 @@ public class PenaltyJpaRepositoryTest {
 		Penalty penalty = new Penalty(rent.getId(), PenaltyReason.MISSED_DUE_DATE, PenaltyStatus.PENDING);
 		penaltyJpaRepository.saveAndFlush(penalty);
 		entityManager.clear();
-		Penalty findOne = penaltyJpaRepository.findOne(rent.getId());
-		assertNotNull(findOne);
-		assertNotNull(findOne.getRent());
-		assertEquals(rent, findOne.getRent());
-		assertEquals(penalty, findOne);
+		Optional<Penalty> penaltyOptional = penaltyJpaRepository.findById(rent.getId());
+		Penalty penalty1 = penaltyOptional.get();
+		assertNotNull(penalty1);
+		assertNotNull(penalty1.getRent());
+		assertEquals(rent, penalty1.getRent());
+		assertEquals(penalty, penalty1);
 	}
 	
 	@Test
@@ -67,7 +69,8 @@ public class PenaltyJpaRepositoryTest {
 		assertEquals(1, updateStatus);
 		
 		entityManager.clear();
-		Penalty findOne = penaltyJpaRepository.findOne(rent.getId());
+		Optional<Penalty> penaltyOptional = penaltyJpaRepository.findById(rent.getId());
+		Penalty findOne = penaltyOptional.get();
 		assertNotNull(findOne);
 		assertEquals(PenaltyStatus.DONE, findOne.getStatus());
 		assertEquals(PenaltyReason.MISSED_DUE_DATE, findOne.getReason());
@@ -81,7 +84,7 @@ public class PenaltyJpaRepositoryTest {
 		
 		entityManager.clear();
 		
-		findOne = penaltyJpaRepository.findOne(rent.getId());
+		findOne = penaltyJpaRepository.findById(rent.getId()).get();
 		assertNotNull(findOne);
 		assertEquals(amount,findOne.getAmount());
 		assertEquals(PenaltyType.PAYMENT, findOne.getType());

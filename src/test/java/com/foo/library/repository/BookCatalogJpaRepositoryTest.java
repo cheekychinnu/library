@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,7 +86,7 @@ public class BookCatalogJpaRepositoryTest {
 		assertEquals(1, allCatalogs.size());
 
 		Long bookCatalogId = allCatalogs.get(0).getId();
-		bookCatalogJpaRepository.delete(bookCatalogId);
+		bookCatalogJpaRepository.deleteById(bookCatalogId);
 
 		allCatalogs = bookCatalogJpaRepository.findAll();
 		assertNotNull(allCatalogs);
@@ -275,8 +276,10 @@ public class BookCatalogJpaRepositoryTest {
 		Book book = createTestBook();
 		List<Long> bookCatalogs = new ArrayList<>();
 		entityManager.clear();
-		BookCatalog bookCatalog = bookCatalogJpaRepository.findOne(book
+		Optional<BookCatalog> bookCatalogOptional = bookCatalogJpaRepository.findById(book
 				.getBookCatalog().getId());
+		BookCatalog bookCatalog = bookCatalogOptional.get();
+		assertNotNull(bookCatalog);
 		bookCatalogs.add(bookCatalog.getId());
 		assertEquals(book, bookCatalog.getBooks().get(0));
 		List<Long> updateCatalogWithAvailability = bookCatalogJpaRepository

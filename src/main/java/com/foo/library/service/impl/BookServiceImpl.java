@@ -3,6 +3,7 @@ package com.foo.library.service.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,8 +46,11 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public Book addBookToTheCatalog(Long bookCatalogId, Book book) {
-		BookCatalog bookCatalog = bookCatalogJpaRepository.findOne(bookCatalogId);
-		book.setBookCatalog(bookCatalog);
+		Optional<BookCatalog> bookCatalog = bookCatalogJpaRepository.findById(bookCatalogId);
+		if(!bookCatalog.isPresent()){
+			throw new IllegalStateException("No Book catalog present for id : "+bookCatalogId);
+		}
+		book.setBookCatalog(bookCatalog.get());
 		book = bookJpaRepository.saveAndFlush(book);
 		entityManager.refresh(book); // refreshing book will refresh bookCatalog
 		return book;

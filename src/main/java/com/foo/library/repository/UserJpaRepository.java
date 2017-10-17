@@ -12,5 +12,5 @@ public interface UserJpaRepository  extends JpaRepository<User, String>{
 	@Query("select new User(u.id, u.emailId, u.firstName, u.lastName) from User u "
 			+ "where u.id = :id and u.password = :password")
 	List<User> queryByIdAndPassword(@Param("id") String id, @Param("password")String password);
-	boolean exists(String id);
+	boolean existsById(String id);
 }
