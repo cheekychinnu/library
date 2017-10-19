@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
@@ -35,6 +36,7 @@ public class BookServiceImpl implements BookService {
 	@Autowired
 	private NotificationService notificationService;
 	
+	@Transactional
 	@Override
 	public BookCatalog addBookCatalogToLibrary(BookCatalog bookCatalog) {
 		BookCatalog catalog = bookCatalogJpaRepository
@@ -44,6 +46,7 @@ public class BookServiceImpl implements BookService {
 		return catalog;
 	}
 
+	@Transactional
 	@Override
 	public Book addBookToTheCatalog(Long bookCatalogId, Book book) {
 		Optional<BookCatalog> bookCatalog = bookCatalogJpaRepository.findById(bookCatalogId);
