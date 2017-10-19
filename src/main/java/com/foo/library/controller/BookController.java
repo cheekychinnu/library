@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.foo.library.model.BookCatalog;
 import com.foo.library.service.LibraryService;
 
-@Controller("/books")
+@Controller("/library/books")
 public class BookController {
 	
 	@Autowired

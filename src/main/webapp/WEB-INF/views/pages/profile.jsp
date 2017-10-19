@@ -27,9 +27,9 @@ Email Id : ${user.emailId} <br/>
 	</font> 
 </c:forEach>
 
-<br/><a href="/watching">Watching</a>
-<br/><a href="/pastRents">Past Rents</a>
-<br/><a href="/ratingAndReview">My Rating and Review </a>
+<br/><a href="/user/watching">Watching</a>
+<br/><a href="/user/pastRents">Past Rents</a>
+<br/><a href="/user/ratingAndReview">My Rating and Review </a>
 
 </body>
 </html>

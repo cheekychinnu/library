@@ -56,4 +56,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		return watcherJpaRepository.findByBookCatalogId(bookCatalogId);
 	}
 
+	@Override
+	public List<Watcher> getWatchers(String userId) {
+		return watcherJpaRepository.findByIdUserId(userId);
+	}
+
 }

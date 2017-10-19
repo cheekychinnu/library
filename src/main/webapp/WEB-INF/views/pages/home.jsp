@@ -13,7 +13,10 @@
 	<c:choose>
 		<c:when test="${empty loggedInUser}"> <br/>
 			<a href="/register">Register</a> <br/>
-		<a href="/login">Login</a> <br/>
+			<a href="/login">Login</a> <br/>
+		</c:when>
+		<c:when test="${loggedInUser.id =='admin'}">
+			<a href="/admin">Admin</a> <br/>
 		</c:when>
 		<c:otherwise>
 		Hello ${loggedInUser.firstName}! <br/>

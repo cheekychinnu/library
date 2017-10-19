@@ -20,8 +20,8 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 				"/library/**");
 		registry.addInterceptor(new LoginInterceptor()).addPathPatterns(
 				"/user/**");
-		// ADDED FOR TESTING. REMOVE LATER.
-		// registry.addInterceptor(new
-		// LoginInterceptor()).addPathPatterns("/**");
+		
+		registry.addInterceptor(new AdminInterceptor()).addPathPatterns(
+				"/admin/**");
 	}
 }

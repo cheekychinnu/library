@@ -163,6 +163,11 @@ public class LibraryServiceImpl implements LibraryService {
 	public void watchForBookCatalog(String userId, Long bookCatalogId) {
 		subscriptionService.watchForBookCatalog(userId, bookCatalogId);		
 	}
+	
+	@Override
+	public List<Watcher> getWatchersForUserId(String userId) {
+		return subscriptionService.getWatchers(userId);
+	}
 
 	@Override
 	public List<Watcher> getWatchers(Long bookCatalogId) {

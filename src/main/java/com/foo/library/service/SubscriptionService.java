@@ -15,4 +15,6 @@ public interface SubscriptionService {
 
 	List<Watcher> getWatchers(Long bookCatalogId);
 
+	List<Watcher> getWatchers(String userId);
 }
+

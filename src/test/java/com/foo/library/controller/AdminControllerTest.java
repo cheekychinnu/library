@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +23,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.foo.library.config.LoginInterceptor;
+import com.foo.library.config.AdminInterceptor;
 import com.foo.library.model.User;
 import com.foo.library.service.LibraryService;
 
-@WebMvcTest(UserProfileController.class)
+@WebMvcTest(AdminController.class)
 @RunWith(SpringRunner.class)
-public class UserProfileControllerTest {
+public class AdminControllerTest {
 	
 	@Autowired
 	private MockMvc mockMvc;
@@ -38,9 +39,9 @@ public class UserProfileControllerTest {
 
 	@Test
 	public void testForNotLoggedInCall() throws Exception{
-		MvcResult mvcResult = mockMvc.perform(get("/user")).andDo(print())
+		MvcResult mvcResult = mockMvc.perform(get("/admin")).andDo(print())
 		.andExpect(status().is3xxRedirection())
-		.andExpect(flash().attribute("loginError", equalTo("Please login to continue")))
+		.andExpect(flash().attribute("loginError", equalTo("Please enter admin credentials to continue")))
 		.andExpect(redirectedUrl("/login"))
 		.andReturn();
 		assertNotNull(mvcResult);
@@ -49,24 +50,24 @@ public class UserProfileControllerTest {
 		assertTrue(
 				"Expecting login interceptor in this path for cases where there is no logged in user",
 				interceptors.stream().anyMatch(
-						i -> i.getClass().equals(LoginInterceptor.class)));
+						i -> i.getClass().equals(AdminInterceptor.class)));
 	}
 	
 	@Test
-	public void testForAdminLoggedInCall() throws Exception{
+	public void testForLoggedInCall() throws Exception {
 		User user = new User();
 		user.setId("admin");
-		MvcResult mvcResult = mockMvc.perform(get("/user").sessionAttr("loggedInUser", user)).andDo(print())
-		.andExpect(status().is3xxRedirection())
-		.andExpect(flash().attribute("accessError", equalTo("You can only access admin page")))
-		.andExpect(redirectedUrl("/admin"))
+		MvcResult mvcResult = mockMvc.perform(get("/admin").sessionAttr("loggedInUser", user)).andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(view().name(equalTo("admin")))
 		.andReturn();
 		assertNotNull(mvcResult);
 		List<HandlerInterceptor> interceptors = Arrays.asList(mvcResult
 				.getInterceptors());
 		assertTrue(
-				"Expecting login interceptor in this path for cases where there is admin login",
+				"Expecting login interceptor in this path for cases where there is no logged in user",
 				interceptors.stream().anyMatch(
-						i -> i.getClass().equals(LoginInterceptor.class)));
+						i -> i.getClass().equals(AdminInterceptor.class)));
+	
 	}
 }

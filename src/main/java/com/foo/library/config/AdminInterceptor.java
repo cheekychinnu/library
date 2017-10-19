@@ -9,26 +9,22 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.foo.library.model.User;
 
-public class LoginInterceptor extends HandlerInterceptorAdapter{
+public class AdminInterceptor extends HandlerInterceptorAdapter{
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		String loginUrl = request.getContextPath() + "/login";
 		User user = (User) request.getSession().getAttribute("loggedInUser");
-		if(user == null ) {
+		if(user == null || !user.getId().equals("admin")) {
 			FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
-			outputFlashMap.put("loginError", "Please login to continue");
-			//New utility added in Spring 5
+			outputFlashMap.put("loginError", "Please enter admin credentials to continue");
+			
+			User user2 = new User();
+			user2.setId("admin");
+			request.setAttribute("user", user2);
+			
 			RequestContextUtils.saveOutputFlashMap(loginUrl, request, response);
 			response.sendRedirect(loginUrl);
-			return false;
-		}
-		if(user.getId().equals("admin")) {
-			String adminUrl = request.getContextPath() + "/admin";
-			FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
-			outputFlashMap.put("accessError", "You can only access admin page");
-			RequestContextUtils.saveOutputFlashMap(adminUrl, request, response);
-			response.sendRedirect(adminUrl);
 			return false;
 		}
 		return true;

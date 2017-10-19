@@ -66,5 +66,7 @@ public interface LibraryService {
 	List<Rent> getOpenRents(String userId);
 	
 	List<Rent> getRentsDueIn(Integer noOfDays);
+
+	List<Watcher> getWatchersForUserId(String userId);
 	
 }
