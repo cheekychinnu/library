@@ -38,36 +38,40 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/addBookCatalog", method = RequestMethod.POST)
-	public String addBookCatalog(@ModelAttribute @Valid BookCatalog bookCatalog, BindingResult bindingResult,
+	public String addBookCatalog(@ModelAttribute("bookCatalog") @Valid BookCatalog bookCatalog, BindingResult bindingResult, Model model,
 			@RequestHeader("referer") String referedFrom,
 			RedirectAttributes redirectAttributes) {
-		String message = null;
+		if(bindingResult.hasErrors()) {
+			return "admin";
+		}
 		try {
 			List<BookCatalog> searchBookCatalogByBookName = libraryService
 					.searchBookCatalogByBookName(bookCatalog.getName());
 			if (!CollectionUtils.isEmpty(searchBookCatalogByBookName)) {
-				message = "Catalog already present with name "
-						+ bookCatalog.getName();
+				model.addAttribute("addBookCatalogMessage",
+						"Catalog already present with name "
+								+ bookCatalog.getName());
 			} else {
 				List<BookCatalog> searchBookCatalogByIsbn = libraryService
 						.searchBookCatalogByIsbn(bookCatalog.getIsbn());
 				if (!CollectionUtils.isEmpty(searchBookCatalogByIsbn)) {
-					message = "Catalog already present with ISBN "
-							+ bookCatalog.getIsbn();
+					model.addAttribute("addBookCatalogMessage",
+							"Catalog already present with ISBN "
+									+ bookCatalog.getIsbn());
 				} else {
 					libraryService.addBookCatalogToLibrary(bookCatalog);
-					message = "Successfully added the catalog";
+					redirectAttributes.addFlashAttribute("addBookCatalogMessage",
+							"Successfully added the catalog");
+					return "redirect:" + referedFrom;
 				}
 			}
 
 		} catch (Exception e) {
 			System.out.println("Exception thrown: "+e.getMessage());
-			message = "Error adding the catalog. Try after sometime.";
-		} finally {
-			redirectAttributes.addFlashAttribute("addBookCatalogMessage",
-					message);
-		}
-		return "redirect:" + referedFrom;
+			model.addAttribute("addBookCatalogMessage",
+					"Error adding the catalog. Try after sometime.");
+		} 
+		return "admin";
 	}
 	
 	@InitBinder
