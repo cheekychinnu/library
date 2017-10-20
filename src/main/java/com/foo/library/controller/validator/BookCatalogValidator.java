@@ -1,13 +1,11 @@
 package com.foo.library.controller.validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import com.foo.library.model.BookCatalog;
-import com.foo.library.service.LibraryService;
 
 @Component
 public class BookCatalogValidator implements Validator{

@@ -32,6 +32,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.foo.library.config.AdminInterceptor;
 import com.foo.library.controller.validator.BookCatalogValidator;
+import com.foo.library.controller.validator.BookValidator;
+import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
 import com.foo.library.model.User;
 import com.foo.library.service.LibraryService;
@@ -49,6 +51,9 @@ public class AdminControllerTest {
 	@SpyBean
 	private BookCatalogValidator bookCatalogValidator;
 
+	@SpyBean
+	private BookValidator bookValidator;
+	
 	@Test
 	public void testForNotLoggedInCall() throws Exception {
 		MvcResult mvcResult = mockMvc
@@ -179,6 +184,52 @@ public class AdminControllerTest {
 								equalTo("Successfully added the catalog")))
 				.andExpect(
 						model().attributeDoesNotExist("bookCatalog"))
+				.andExpect(view().name(equalTo("redirect:"+referer)));
+	}
+	
+	@Test
+	public void testForAddBookWithEmptyProvider() throws Exception {
+		User user = new User();
+		user.setId("admin");
+		mockMvc.perform(
+				post("/admin/addBook").header("referer", "something")
+						.sessionAttr("loggedInUser", user))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(
+						model().attributeHasFieldErrors("book", "provider"))
+				.andExpect(view().name(equalTo("admin")));
+	}
+
+	@Test
+	public void testForSuccessfulAddBook() throws Exception {
+		Book book= new Book();
+		book.setComments("xyc");
+		book.setProvider("chinnu");
+		BookCatalog bookCatalog = new BookCatalog();
+		Long bookCatalogId = 1L;
+		bookCatalog.setId(bookCatalogId);
+		book.setBookCatalog(bookCatalog);
+		when(libraryService.addBookToTheCatalog(bookCatalogId, book))
+				.thenReturn(book);
+		
+		User user = new User();
+		user.setId("admin");
+
+		String referer = "something";
+		mockMvc.perform(
+				post("/admin/addBook").header("referer", referer)
+						.sessionAttr("loggedInUser", user)
+						.param("provider", book.getProvider())
+						.param("bookCatalog.id", bookCatalogId.toString()))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(
+						flash().attribute(
+								"addBookMessage",
+								equalTo("Successfully added to the catalog")))
+				.andExpect(
+						model().attributeDoesNotExist("book"))
 				.andExpect(view().name(equalTo("redirect:"+referer)));
 	}
 }

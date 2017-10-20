@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.foo.library.controller.validator.BookCatalogValidator;
+import com.foo.library.controller.validator.BookValidator;
+import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
 import com.foo.library.service.LibraryService;
 
@@ -30,52 +32,105 @@ public class AdminController {
 
 	@Autowired
 	private BookCatalogValidator bookCatalogValidator;
+
+	@ModelAttribute("bookCatalog")
+	public BookCatalog getBookCatalog() {
+		return new BookCatalog();
+	}
+	
+	@ModelAttribute("book") 
+	public Book getBook(){
+		return new Book();
+	}
+	
+	@ModelAttribute("allBookCatalogs")
+	public List<BookCatalog> getAllBookCatalogs(){
+		List<BookCatalog> allBookCatalogs = libraryService.getAllBookCatalogs();
+		return allBookCatalogs;
+	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showAdminPage(Model model) {
-		model.addAttribute("bookCatalog", new BookCatalog());
 		return "admin";
 	}
-	
+
 	@RequestMapping(value = "/addBookCatalog", method = RequestMethod.POST)
-	public String addBookCatalog(@ModelAttribute("bookCatalog") @Valid BookCatalog bookCatalog, BindingResult bindingResult, Model model,
+	public String addBookCatalog(
+			@ModelAttribute("bookCatalog") @Valid BookCatalog bookCatalog,
+			BindingResult bindingResult, Model model,
 			@RequestHeader("referer") String referedFrom,
 			RedirectAttributes redirectAttributes) {
-		if(bindingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			return "admin";
 		}
 		try {
 			List<BookCatalog> searchBookCatalogByBookName = libraryService
 					.searchBookCatalogByBookName(bookCatalog.getName());
 			if (!CollectionUtils.isEmpty(searchBookCatalogByBookName)) {
-				model.addAttribute("addBookCatalogMessage",
+				model.addAttribute(
+						"addBookCatalogMessage",
 						"Catalog already present with name "
 								+ bookCatalog.getName());
 			} else {
 				List<BookCatalog> searchBookCatalogByIsbn = libraryService
 						.searchBookCatalogByIsbn(bookCatalog.getIsbn());
 				if (!CollectionUtils.isEmpty(searchBookCatalogByIsbn)) {
-					model.addAttribute("addBookCatalogMessage",
+					model.addAttribute(
+							"addBookCatalogMessage",
 							"Catalog already present with ISBN "
 									+ bookCatalog.getIsbn());
 				} else {
 					libraryService.addBookCatalogToLibrary(bookCatalog);
-					redirectAttributes.addFlashAttribute("addBookCatalogMessage",
+					redirectAttributes.addFlashAttribute(
+							"addBookCatalogMessage",
 							"Successfully added the catalog");
 					return "redirect:" + referedFrom;
 				}
 			}
 
 		} catch (Exception e) {
-			System.out.println("Exception thrown: "+e.getMessage());
+			System.out.println("Exception thrown: " + e.getMessage());
 			model.addAttribute("addBookCatalogMessage",
 					"Error adding the catalog. Try after sometime.");
-		} 
+		}
 		return "admin";
 	}
-	
-	@InitBinder
-	private void initBinder(WebDataBinder binder) {
+
+	@InitBinder("bookCatalog")
+	private void initBookCatalogBinder(WebDataBinder binder) {
 		binder.setValidator(bookCatalogValidator);
 	}
+	
+	@Autowired
+	private BookValidator bookValidator;
+
+	@RequestMapping(value = "/addBook", method = RequestMethod.POST)
+	public String addBook(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult, Model model,
+			@RequestHeader("referer") String referedFrom,
+			RedirectAttributes redirectAttributes) {
+		
+		System.out.println("Referer here ;"+referedFrom);
+		
+		if(bindingResult.hasErrors()) {
+			return "admin";
+		}
+		try {
+			libraryService.addBookToTheCatalog(book.getBookCatalog().getId(),
+					book);
+			redirectAttributes.addFlashAttribute("addBookMessage",
+					"Successfully added to the catalog");
+			return "redirect:" + referedFrom;
+		} catch (Exception e) {
+			System.out.println("Exception thrown: "+e.getMessage());
+			model.addAttribute("addBookMessage",
+					"Error adding book to the catalog. Try after sometime.");
+			return "admin";
+		} 
+	}
+	
+	@InitBinder("book")
+	private void initBookBinder(WebDataBinder binder) {
+		binder.setValidator(bookValidator);
+	}
+
 }
