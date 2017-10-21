@@ -14,7 +14,7 @@
 	<div class="container">
 		${addBookCatalogMessage}
 		<div class="form-group form">
-			<form:form name="input" method="post" action="admin/addBookCatalog"
+			<form:form name="input" method="post" action="/admin/bookCatalog/create"
 				modelAttribute="bookCatalog">
 				<form:errors path="name" />
 		Name  : <form:input type="text" path="name" />
@@ -34,7 +34,7 @@
 	<div class="container">
 		${addBookMessage}
 		<div class="form-group form">
-			<form:form name="input" method="post" action="/admin/addBook"
+			<form:form name="input" method="post" action="/admin/book/create"
 				modelAttribute="book">
 				<form:errors path="bookCatalog" />	
 			Catalog :

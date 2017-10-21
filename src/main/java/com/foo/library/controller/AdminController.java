@@ -54,7 +54,7 @@ public class AdminController {
 		return "admin";
 	}
 
-	@RequestMapping(value = "/addBookCatalog", method = RequestMethod.POST)
+	@RequestMapping(value = "/bookCatalog/create", method = RequestMethod.POST)
 	public String addBookCatalog(
 			@ModelAttribute("bookCatalog") @Valid BookCatalog bookCatalog,
 			BindingResult bindingResult, Model model,
@@ -84,7 +84,7 @@ public class AdminController {
 					redirectAttributes.addFlashAttribute(
 							"addBookCatalogMessage",
 							"Successfully added the catalog");
-					return "redirect:" + referedFrom;
+					return "redirect:" + "/admin";
 				}
 			}
 
@@ -104,7 +104,7 @@ public class AdminController {
 	@Autowired
 	private BookValidator bookValidator;
 
-	@RequestMapping(value = "/addBook", method = RequestMethod.POST)
+	@RequestMapping(value = "/book/create", method = RequestMethod.POST)
 	public String addBook(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult, Model model,
 			@RequestHeader("referer") String referedFrom,
 			RedirectAttributes redirectAttributes) {
@@ -119,7 +119,7 @@ public class AdminController {
 					book);
 			redirectAttributes.addFlashAttribute("addBookMessage",
 					"Successfully added to the catalog");
-			return "redirect:" + referedFrom;
+			return "redirect:" + "/admin";
 		} catch (Exception e) {
 			System.out.println("Exception thrown: "+e.getMessage());
 			model.addAttribute("addBookMessage",

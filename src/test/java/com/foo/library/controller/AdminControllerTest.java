@@ -97,7 +97,7 @@ public class AdminControllerTest {
 		User user = new User();
 		user.setId("admin");
 		mockMvc.perform(
-				post("/admin/addBookCatalog").header("referer", "something")
+				post("/admin/bookCatalog/create").header("referer", "something")
 						.sessionAttr("loggedInUser", user))
 				.andDo(print())
 				.andExpect(status().isOk())
@@ -123,7 +123,7 @@ public class AdminControllerTest {
 		user.setId("admin");
 
 		mockMvc.perform(
-				post("/admin/addBookCatalog").header("referer", "something")
+				post("/admin/bookCatalog/create").header("referer", "something")
 						.sessionAttr("loggedInUser", user)
 						.param("name", bookCatalog.getName())
 						.param("isbn", bookCatalog.getIsbn())
@@ -171,7 +171,7 @@ public class AdminControllerTest {
 
 		String referer = "something";
 		mockMvc.perform(
-				post("/admin/addBookCatalog").header("referer", referer)
+				post("/admin/bookCatalog/create").header("referer", referer)
 						.sessionAttr("loggedInUser", user)
 						.param("name", bookCatalog.getName())
 						.param("isbn", bookCatalog.getIsbn())
@@ -192,7 +192,7 @@ public class AdminControllerTest {
 		User user = new User();
 		user.setId("admin");
 		mockMvc.perform(
-				post("/admin/addBook").header("referer", "something")
+				post("/admin/book/create").header("referer", "something")
 						.sessionAttr("loggedInUser", user))
 				.andDo(print())
 				.andExpect(status().isOk())
@@ -218,7 +218,7 @@ public class AdminControllerTest {
 
 		String referer = "something";
 		mockMvc.perform(
-				post("/admin/addBook").header("referer", referer)
+				post("/admin/book/create").header("referer", referer)
 						.sessionAttr("loggedInUser", user)
 						.param("provider", book.getProvider())
 						.param("bookCatalog.id", bookCatalogId.toString()))

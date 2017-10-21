@@ -54,6 +54,8 @@ public class BookServiceImpl implements BookService {
 			throw new IllegalStateException("No Book catalog present for id : "+bookCatalogId);
 		}
 		book.setBookCatalog(bookCatalog.get());
+		book.setIsActive(true);
+		book.setIsAvailable(true);
 		book = bookJpaRepository.saveAndFlush(book);
 		entityManager.refresh(book); // refreshing book will refresh bookCatalog
 		return book;
