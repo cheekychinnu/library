@@ -115,6 +115,8 @@ public class AdminController {
 			return "admin";
 		}
 		try {
+			book.setIsActive(true);
+			book.setIsActive(true);
 			libraryService.addBookToTheCatalog(book.getBookCatalog().getId(),
 					book);
 			redirectAttributes.addFlashAttribute("addBookMessage",

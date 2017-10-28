@@ -110,8 +110,8 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public RentResponse rentBook(String userId, Long bookId) {
-		return rentService.rentBook(userId, bookId);
+	public RentResponse rentBook(String userId, Long bookCatalogId) {
+		return rentService.rentBook(userId, bookCatalogId);
 	}
 
 	@Override
@@ -172,6 +172,11 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public List<Watcher> getWatchers(Long bookCatalogId) {
 		return subscriptionService.getWatchers(bookCatalogId);
+	}
+
+	@Override
+	public ReturnResponse returnBook(Long rentId) {
+		return rentService.returnBook(rentId);
 	}
 
 }

@@ -42,7 +42,7 @@ public interface LibraryService {
 	
 	List<RatingAndReview> getRatingAndReviewsForUser(String userId);
 	
-	RentResponse rentBook(String userId, Long bookId);
+	RentResponse rentBook(String userId, Long bookCatalogId);
 	
 	void watchForBookCatalog(String userId, Long bookCatalogId);
 
@@ -50,6 +50,8 @@ public interface LibraryService {
 	
 	// pending test cases :
 	ReturnResponse returnBook(Long rentId, Long bookId);
+	
+	ReturnResponse returnBook(Long rentId);
 	
 	void markPenaltyAsPaid(Long rentId);
 	

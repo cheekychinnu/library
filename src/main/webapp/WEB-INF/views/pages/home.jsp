@@ -17,6 +17,7 @@
 		</c:when>
 		<c:when test="${loggedInUser.id =='admin'}">
 			<a href="/admin">Admin</a> <br/>
+			<a href="/logout">Logout</a> <br/>
 		</c:when>
 		<c:otherwise>
 		Hello ${loggedInUser.firstName}! <br/>

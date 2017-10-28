@@ -50,7 +50,7 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	@Transactional
-	public RentResponse rentBook(String userId, Long bookId) {
+	public RentResponse rentBook(String userId, Long bookCatalogId) {
 
 		Date issuedDate = getToday();
 		Date dueDate = computeDueDate(issuedDate);
@@ -60,21 +60,20 @@ public class RentServiceImpl implements RentService {
 
 		// since this is a singleton bean, "this" is sufficient monitor object
 		synchronized (this) {
-
-			Optional<Book> bookOptional= bookJpaRepository.findById(bookId);
-			Book book = bookOptional.get();
-			if (book.getIsAvailable()) {
+			List<Book> availableBooksForBookCatalog = bookJpaRepository.findByBookCatalogIdAndIsActiveTrueAndIsAvailableTrue(bookCatalogId);
+			if (!availableBooksForBookCatalog.isEmpty()) {
+				Book book = availableBooksForBookCatalog.get(0);
+				Long bookId = book.getId();
 				rent.setBook(book);
 				rent = rentJpaRepository.saveAndFlush(rent);
 				bookJpaRepository.updateIsAvailable(bookId, false);
 				rentResponse = new RentResponse(rent);
-				entityManager.refresh(rent); // refreshing rent -> book -> bookCatalog
+				entityManager.refresh(rent); // refreshing rent -> book ->
+												// bookCatalog
 			} else {
 				rentResponse = new RentResponse();
 				rentResponse
-						.markAsFailed("The requested book : "
-								+ book.getBookCatalog().getName()
-								+ " is not available");
+						.markAsFailed("The requested book is not available");
 			}
 		}
 
@@ -94,7 +93,13 @@ public class RentServiceImpl implements RentService {
 		calendar.setTime(issuedDate);
 		calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
 		calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, -1);
-		return calendar.getTime();
+		Date lastFridayOfCurrentMonth = calendar.getTime();
+		if(issuedDate.after(lastFridayOfCurrentMonth)){
+			calendar.add(Calendar.MONTH, 1);
+			Date lastFridayOfNextMonth = calendar.getTime();
+			return lastFridayOfNextMonth;
+		}
+		return lastFridayOfCurrentMonth;
 	}
 
 	@Override
@@ -226,5 +231,11 @@ public class RentServiceImpl implements RentService {
 				.findByIsClosedFalseAndDueDateBefore(c.getTime());
 		fillIsDueDatePassed(rents);
 		return rents;
+	}
+
+	@Override
+	public ReturnResponse returnBook(Long rentId) {
+		Rent rent = rentJpaRepository.getOne(rentId);
+		return returnBook(rentId, rent.getBook().getId());
 	}
 }

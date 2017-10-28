@@ -9,7 +9,7 @@ import com.foo.library.model.ReturnResponse;
 
 public interface RentService {
 	
-	RentResponse rentBook(String userId, Long bookId);
+	RentResponse rentBook(String userId, Long bookCatalogId);
 	
 	ReturnResponse returnBook(Long rentId, Long bookId);
 	
@@ -28,4 +28,6 @@ public interface RentService {
 	List<Rent> getOpenRents(String userId);
 	
 	List<Rent> getRentsDueIn(Integer noOfDays);
+
+	ReturnResponse returnBook(Long rentId);
 }

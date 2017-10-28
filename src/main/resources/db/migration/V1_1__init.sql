@@ -110,3 +110,5 @@
        add constraint FKnimhtgmag59k3j6ecyln87jjm 
        foreign key (book_catalog_id) 
        references book_catalog;
+       
+    insert into user values ('admin','vinodhinic@gmail.com','admin','admin', 'admin123');

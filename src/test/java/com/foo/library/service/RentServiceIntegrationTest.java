@@ -46,7 +46,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId = book.getId();
-		RentResponse response = rentService.rentBook(userId, bookId);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertTrue(response.getIsSuccess());
 
 		Long rentId = response.getRent().getId();
@@ -93,7 +93,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId = book.getId();
-		RentResponse response = rentService.rentBook(userId, bookId);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertTrue(response.getIsSuccess());
 
 		Long rentId = response.getRent().getId();
@@ -149,14 +149,14 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId1 = book1.getId();
-		RentResponse response = rentService.rentBook(userId, bookId1);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertTrue(response.getIsSuccess());
 		Long rentId1 = response.getRent().getId();
 
 		assertBookCatalogAvailability(addBookCatalogToLibrary.getId(), true);
 
 		Long bookId2 = book2.getId();
-		response = rentService.rentBook(userId, bookId2);
+		response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertTrue(response.getIsSuccess());
 		Long rentId2 = response.getRent().getId();
 
@@ -207,7 +207,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId = book.getId();
-		RentResponse response = rentService.rentBook(userId, bookId);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertTrue(response.getIsSuccess());
 
 		Long rentId = response.getRent().getId();
@@ -245,7 +245,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId = book.getId();
-		RentResponse response = rentService.rentBook(userId, bookId);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertTrue(response.getIsSuccess());
 
 		Long rentId = response.getRent().getId();
@@ -276,7 +276,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId = book.getId();
-		RentResponse response = rentService.rentBook(userId, bookId);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertTrue(response.getIsSuccess());
 
 		Long rentId = response.getRent().getId();
@@ -315,7 +315,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId = book.getId();
-		RentResponse response = rentService.rentBook(userId, bookId);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertNotNull(response);
 		assertTrue(response.getIsSuccess());
 		assertNotNull(response.getRent());
@@ -350,7 +350,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 
 		String userId = "chinnu";
 		Long bookId = book.getId();
-		RentResponse response = rentService.rentBook(userId, bookId);
+		RentResponse response = rentService.rentBook(userId, addBookCatalogToLibrary.getId());
 		assertNotNull(response);
 		assertFalse(response.getIsSuccess());
 		assertNotNull(response.getMessage());
