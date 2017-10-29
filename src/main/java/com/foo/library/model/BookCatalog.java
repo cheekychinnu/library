@@ -110,7 +110,8 @@ public class BookCatalog {
 	@Override
 	public String toString() {
 		return "BookCatalog [id=" + id + ", name=" + name + ", author="
-				+ author + ", isbn=" + isbn + "]";
+				+ author + ", isbn=" + isbn + ", isAvailable ="+getIsAvailable()+" averageRating:"+getAverageRating()
+				+"]";
 	}
 
 	@Override

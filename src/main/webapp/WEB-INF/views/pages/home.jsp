@@ -22,6 +22,7 @@
 		<c:otherwise>
 		Hello ${loggedInUser.firstName}! <br/>
 		<a href="/user">View Profile</a> <br/>
+		<a href="/books/getAllBooks">View Library</a> <br/>
 		<a href="/logout">Logout</a> <br/>
 		</c:otherwise>
 	</c:choose>

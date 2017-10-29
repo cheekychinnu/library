@@ -9,7 +9,7 @@
 </head>
 <body>
 
-	<table>
+	<table border=1>
 		<tr>
 			<th>Title</th>
 			<th>Author</th>
@@ -25,35 +25,39 @@
 				<td>${b.bookCatalog.author}</td>
 				<td>${b.bookCatalog.isbn}</td>
 				<td>${b.bookCatalog.averageRating}</td>
-				<td>${b.userRating}</td>
-				<td><c:choose>
-						<c:when test="${not empty b.currentOpenRent}">
-							<a href="/library/books/return?rentId=${b.currentOpenRent.id}">Return</a>
+				<td>${b.ratingAndReview.rating}</td>
+				<td>
+				<c:choose>
+					<c:when test="${not empty b.currentOpenRent}">
+						<a href="/books/return?rentId=${b.currentOpenRent.id}">Return</a>
+					</c:when>
+					<c:when test="${b.bookCatalog.isAvailable == false}">
+						<a href="/books/watch?bookCatalogId=${b.bookCatalog.id}">Watch</a>
+					</c:when>
+					<c:otherwise>
+						<c:if
+							test="${b.bookCatalog.isAvailable == true && b.isAlreadyRented == true}">
+							<a href="/books/rent?bookCatalogId=${b.bookCatalog.id}">
+								Rent Again </a>
+						</c:if> 
+						<c:if
+							test="${b.bookCatalog.isAvailable == true and b.isAlreadyRented == false}">
+							<a href="/books/rent?bookCatalogId=${b.bookCatalog.id}">
+								Rent </a>
+						</c:if>
+					</c:otherwise>
+				</c:choose>
+					<c:choose>
+						<c:when test="${isDueDateMissed eq true}">
+							Pending Due
 						</c:when>
-						<c:otherwise>
-							<c:when test="${b.isAvailable} == true">
-								<c:when test="${b.isAlreadyRented} == true">
-									<a href="/library/books/rent?bookCatalogId=${b.bookCatalog.id}"> Rent Again </a>
-								</c:when>
-								<c:otherwise>
-									<a href="/library/books/rent?bookCatalogId=${b.bookCatalog.id}"> Rent </a>
-								</c:otherwise>
-							</c:when>
-							<c:otherwise>
-								<a href="/library/books/watch?bookCatalogId=${b.bookCatalog.id}">Watch</a>
-							</c:otherwise>
-						</c:otherwise>
-					</c:choose>
-					<c:when test="${isDueDateMissed} == true">
-						Pending Due
-					</c:when>
-					<c:when test="not empty ${rentResult}">
-						${rentResult}
-					</c:when>
-					<c:when test="not empty ${watchMessage}">
-						${watchMessage}
-					</c:when>
-				</td>
+						<c:when test="${not empty rentResult}">
+							${rentResult}
+						</c:when>
+						<c:when test="${not empty watchMessage}">
+							${watchMessage}
+						</c:when>
+					</c:choose></td>
 			</tr>
 		</c:forEach>
 	</table>

@@ -42,4 +42,11 @@ public class BookCatalogWithUserContext {
 		this.currentOpenRent = currentOpenRent;
 	}
 
+	@Override
+	public String toString() {
+		return "BookCatalogWithUserContext [isAlreadyRented=" + isAlreadyRented
+				+ ", ratingAndReview=" + ratingAndReview + ", currentOpenRent="
+				+ currentOpenRent + ", bookCatalog=" + bookCatalog + "]";
+	}
+	
 }

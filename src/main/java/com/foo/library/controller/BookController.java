@@ -14,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -25,13 +27,14 @@ import com.foo.library.model.ReturnResponse;
 import com.foo.library.model.User;
 import com.foo.library.service.LibraryService;
 
-@Controller("/library/books")
+@Controller
+@RequestMapping("/books")
 public class BookController {
 
 	@Autowired
 	private LibraryService libraryService;
 
-	@RequestMapping
+	@RequestMapping(value="/getAllBooks", method=RequestMethod.GET)
 	public ModelAndView getAllBooks(HttpSession session) {
 		User user = (User) session.getAttribute("loggedInUser");
 		String userId = user.getId();
@@ -75,42 +78,45 @@ public class BookController {
 
 			bookCatalogsWithUserContext.add(bookCatalogWithUserContext);
 		}
+		System.out.println(bookCatalogsWithUserContext);
 		return new ModelAndView("book", "allBookCatalogs",
 				bookCatalogsWithUserContext);
 	}
 
-	@RequestMapping(value = "/return/{rentId}")
-	public String returnBook(@PathVariable("rentId") Long rentId, Model model,
+	@RequestMapping(value = "/return", method=RequestMethod.GET)
+	public String returnBook(@RequestParam("rentId") Long rentId, Model model,
 			@RequestHeader("referer") String referedFrom, RedirectAttributes redirectAttributes) {
 		ReturnResponse returnBookResponse = libraryService.returnBook(rentId);
 		Boolean isDueDateMissed = returnBookResponse.getIsDueDateMissed();
-		redirectAttributes.addAttribute("isDueDateMissed", isDueDateMissed);
+		redirectAttributes.addFlashAttribute("isDueDateMissed", isDueDateMissed);
 		return "redirect:" + referedFrom;
 	}
 	
-	@RequestMapping(value = "/rent/{bookCatalogId}")
-	public String rentBook(@PathVariable("bookCatalogId") Long bookCatalogId, Model model, HttpSession session,
+	@RequestMapping(value = "/rent",method=RequestMethod.GET)
+	public String rentBook(@RequestParam("bookCatalogId") Long bookCatalogId, Model model, HttpSession session,
 			@RequestHeader("referer") String referedFrom, RedirectAttributes redirectAttributes) {
 		User user = (User) session.getAttribute("loggedInUser");
 		String userId = user.getId();
 		
 		RentResponse rentResponse = libraryService.rentBook(userId, bookCatalogId);
 		if(!rentResponse.getIsSuccess()){
-			redirectAttributes.addAttribute("rentResult", rentResponse.getMessage());
+			redirectAttributes.addFlashAttribute("rentResult", rentResponse.getMessage());
 		} else {
-			redirectAttributes.addAttribute("rentResult", "Please return it before :"+rentResponse.getRent().getDueDate());
+			redirectAttributes.addFlashAttribute("rentResult", "Please return it before :"+rentResponse.getRent().getDueDate());
 		}
+		System.out.println("here"+rentResponse.getMessage());
+		System.out.println(referedFrom);
 		return "redirect:"+referedFrom;
 	}
 	
-	@RequestMapping(value = "/watch/{bookCatalogId}")
-	public String watchBookCatalog(@PathVariable("bookCatalogId") Long bookCatalogId, Model model, HttpSession session,
+	@RequestMapping(value = "/watch",method=RequestMethod.GET)
+	public String watchBookCatalog(@RequestParam("bookCatalogId") Long bookCatalogId, Model model, HttpSession session,
 			@RequestHeader("referer") String referedFrom, RedirectAttributes redirectAttributes)
 	{
 		User user = (User) session.getAttribute("loggedInUser");
 		String userId = user.getId();
 		libraryService.watchForBookCatalog(userId, bookCatalogId);
-		redirectAttributes.addAttribute("watchMessage", "We will notify when the book becomes available");
+		redirectAttributes.addFlashAttribute("watchMessage", "We will notify when the book becomes available");
 		return "redirect:"+referedFrom;
 	}
 }

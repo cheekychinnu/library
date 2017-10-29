@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import org.assertj.core.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -107,7 +106,7 @@ public class RentServiceImpl implements RentService {
 	public ReturnResponse returnBook(Long rentId, Long bookId) {
 		
 		bookJpaRepository.updateIsAvailable(bookId, true);
-		Date returnDate = DateUtil.now();
+		Date returnDate = getToday();
 		rentJpaRepository.updateActualReturnDateAndMarkAsClosed(rentId,
 				returnDate);
 		Rent rent = rentJpaRepository.getOne(rentId);
@@ -233,6 +232,7 @@ public class RentServiceImpl implements RentService {
 		return rents;
 	}
 
+	@Transactional
 	@Override
 	public ReturnResponse returnBook(Long rentId) {
 		Rent rent = rentJpaRepository.getOne(rentId);
