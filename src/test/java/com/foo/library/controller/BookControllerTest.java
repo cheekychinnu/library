@@ -16,7 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -111,6 +113,9 @@ public class BookControllerTest {
 		rentResponse.setRent(new Rent());
 		rentResponse.setIsSuccess(true);
 
+		Map<Long, String> rentResultMap = new HashMap<>();
+		rentResultMap.put(bookCatalogId, "Please return it before :");//containsString(
+		
 		when(libraryService.rentBook(userId, bookCatalogId)).thenReturn(
 				rentResponse);
 
@@ -121,9 +126,10 @@ public class BookControllerTest {
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(
-						flash().attribute("rentResult",
-								containsString("Please return it before :")))
-				.andExpect(view().name(equalTo("redirect:" + referer)));
+						flash().attributeExists("rentResult"
+								))
+				// TODO : check if the rentResult Map contains message for bookCatalogId
+								.andExpect(view().name(equalTo("redirect:" + referer)));
 		verify(libraryService).rentBook(userId, bookCatalogId);
 	}
 	
@@ -138,7 +144,9 @@ public class BookControllerTest {
 		rentResponse.setIsSuccess(false);
 		String failureMessage = "some failure message";
 		rentResponse.setMessage(failureMessage);
-
+		
+		Map<Long, String> failureMessageMap = new HashMap<>();
+		failureMessageMap.put(bookCatalogId, failureMessage);
 		when(libraryService.rentBook(userId, bookCatalogId)).thenReturn(
 				rentResponse);
 
@@ -150,7 +158,7 @@ public class BookControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(
 						flash().attribute("rentResult",
-								equalTo(failureMessage)))
+								equalTo(failureMessageMap)))
 				.andExpect(view().name(equalTo("redirect:" + referer)));
 		
 		verify(libraryService).rentBook(userId, bookCatalogId);
@@ -168,16 +176,20 @@ public class BookControllerTest {
 		
 		when(libraryService.returnBook(rentId)).thenReturn(
 				returnResponse);
-
+		
+		Long bookCatalogId = 1L;
+		Map<Long,Boolean> isDueDateMap = new HashMap<>();
+		isDueDateMap.put(bookCatalogId, isDueDateMissed);
+		
 		String referer = "something";
 		mockMvc.perform(
-				get("/books/return?rentId=1").sessionAttr("loggedInUser", user)
+				get("/books/return?rentId=1&bookCatalogId=1").sessionAttr("loggedInUser", user)
 						.header("referer", referer))
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(
 						flash().attribute("isDueDateMissed",
-								equalTo(isDueDateMissed)))
+								equalTo(isDueDateMap)))
 				.andExpect(view().name(equalTo("redirect:" + referer)));
 		verify(libraryService).returnBook(rentId);
 	}
@@ -192,18 +204,22 @@ public class BookControllerTest {
 		boolean isDueDateMissed = true;
 		returnResponse.setIsDueDateMissed(isDueDateMissed);
 		
+		Long bookCatalogId = 1L;
+		Map<Long,Boolean> isDueDateMap = new HashMap<>();
+		isDueDateMap.put(bookCatalogId, isDueDateMissed);
+		
 		when(libraryService.returnBook(rentId)).thenReturn(
 				returnResponse);
 
 		String referer = "something";
 		mockMvc.perform(
-				get("/books/return?rentId=1").sessionAttr("loggedInUser", user)
+				get("/books/return?rentId=1&bookCatalogId=1").sessionAttr("loggedInUser", user)
 						.header("referer", referer))
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(
 						flash().attribute("isDueDateMissed",
-								equalTo(isDueDateMissed)))
+								equalTo(isDueDateMap)))
 				.andExpect(view().name(equalTo("redirect:" + referer)));
 		
 		verify(libraryService).returnBook(rentId);
@@ -217,6 +233,9 @@ public class BookControllerTest {
 
 		Long bookCatalogId = 1L;
 		
+		Map<Long,String> watchMessageMap = new HashMap<>();
+		watchMessageMap.put(bookCatalogId, "We will notify when the book becomes available");
+		
 		String referer = "something";
 		mockMvc.perform(
 				get("/books/watch?bookCatalogId=1").sessionAttr("loggedInUser", user)
@@ -224,7 +243,7 @@ public class BookControllerTest {
 				.andDo(print())
 				.andExpect(status().is3xxRedirection())
 				.andExpect(
-						flash().attribute("watchMessage", equalTo("We will notify when the book becomes available")))
+						flash().attribute("watchMessage", equalTo(watchMessageMap)))
 				.andExpect(view().name(equalTo("redirect:" + referer)));
 		
 		verify(libraryService).watchForBookCatalog(userId, bookCatalogId);

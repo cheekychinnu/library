@@ -1,6 +1,8 @@
 package com.foo.library.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +13,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +26,7 @@ import com.foo.library.model.Rent;
 import com.foo.library.model.RentResponse;
 import com.foo.library.model.ReturnResponse;
 import com.foo.library.model.User;
+import com.foo.library.model.Watcher;
 import com.foo.library.service.LibraryService;
 
 @Controller
@@ -53,7 +55,10 @@ public class BookController {
 				.stream().collect(
 						Collectors.groupingBy(r -> r.getBook().getBookCatalog()
 								.getId()));
-
+		
+		List<Watcher> watchersForUserId = libraryService.getWatchersForUserId(userId);
+		Map<Long, List<Watcher>> bookCatalogIdToWatchersMap = watchersForUserId.stream().collect(Collectors.groupingBy(w->w.getId().getBookCatalogId()));
+		
 		List<BookCatalogWithUserContext> bookCatalogsWithUserContext = new ArrayList<>();
 		for (BookCatalog bookCatalog : allBookCatalog) {
 			BookCatalogWithUserContext bookCatalogWithUserContext = new BookCatalogWithUserContext(bookCatalog);
@@ -75,7 +80,10 @@ public class BookController {
 			if (ratingAndReview != null) {
 				bookCatalogWithUserContext.setRatingAndReview(ratingAndReview);
 			}
-
+			
+			if(bookCatalogIdToWatchersMap.get(bookCatalogId) != null) {
+				bookCatalogWithUserContext.setIsWatching(true);
+			}
 			bookCatalogsWithUserContext.add(bookCatalogWithUserContext);
 		}
 		System.out.println(bookCatalogsWithUserContext);
@@ -84,11 +92,14 @@ public class BookController {
 	}
 
 	@RequestMapping(value = "/return", method=RequestMethod.GET)
-	public String returnBook(@RequestParam("rentId") Long rentId, Model model,
+	public String returnBook(@RequestParam("rentId") Long rentId, @RequestParam("bookCatalogId") Long bookCatalogId, Model model,
 			@RequestHeader("referer") String referedFrom, RedirectAttributes redirectAttributes) {
 		ReturnResponse returnBookResponse = libraryService.returnBook(rentId);
 		Boolean isDueDateMissed = returnBookResponse.getIsDueDateMissed();
-		redirectAttributes.addFlashAttribute("isDueDateMissed", isDueDateMissed);
+		
+		Map<Long, Boolean> dueDateMap = new HashMap<>();
+		dueDateMap.put(bookCatalogId, isDueDateMissed);
+		redirectAttributes.addFlashAttribute("isDueDateMissed", dueDateMap);
 		return "redirect:" + referedFrom;
 	}
 	
@@ -99,11 +110,13 @@ public class BookController {
 		String userId = user.getId();
 		
 		RentResponse rentResponse = libraryService.rentBook(userId, bookCatalogId);
+		Map<Long, String> rentResultMap = new HashMap<>();
 		if(!rentResponse.getIsSuccess()){
-			redirectAttributes.addFlashAttribute("rentResult", rentResponse.getMessage());
+			rentResultMap.put(bookCatalogId, rentResponse.getMessage());
 		} else {
-			redirectAttributes.addFlashAttribute("rentResult", "Please return it before :"+rentResponse.getRent().getDueDate());
+			rentResultMap.put(bookCatalogId, "Please return it before :"+rentResponse.getRent().getDueDate());
 		}
+		redirectAttributes.addFlashAttribute("rentResult", rentResultMap);
 		System.out.println("here"+rentResponse.getMessage());
 		System.out.println(referedFrom);
 		return "redirect:"+referedFrom;
@@ -116,7 +129,10 @@ public class BookController {
 		User user = (User) session.getAttribute("loggedInUser");
 		String userId = user.getId();
 		libraryService.watchForBookCatalog(userId, bookCatalogId);
-		redirectAttributes.addFlashAttribute("watchMessage", "We will notify when the book becomes available");
+		
+		Map<Long, String> watchMessageMap = new HashMap<>();
+		watchMessageMap.put(bookCatalogId, "We will notify when the book becomes available");
+		redirectAttributes.addFlashAttribute("watchMessage", watchMessageMap);
 		return "redirect:"+referedFrom;
 	}
 }

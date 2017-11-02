@@ -39,11 +39,11 @@ public class Rent {
 		this.dueDate = dueDate;
 	}
 
-	public boolean isDueDatePassed() {
+	public boolean getIsDueDatePassed() {
 		return isDueDatePassed;
 	}
 
-	public void setDueDatePassed(boolean isDueDatePassed) {
+	public void setIsDueDatePassed(boolean isDueDatePassed) {
 		this.isDueDatePassed = isDueDatePassed;
 	}
 

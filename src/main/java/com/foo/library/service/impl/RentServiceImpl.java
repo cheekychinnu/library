@@ -210,7 +210,7 @@ public class RentServiceImpl implements RentService {
 				continue;
 			}
 			boolean dueDatePassed = Util.isDueDatePassed(dueDate, currentDate);
-			r.setDueDatePassed(dueDatePassed);
+			r.setIsDueDatePassed(dueDatePassed);
 		}
 	}
 

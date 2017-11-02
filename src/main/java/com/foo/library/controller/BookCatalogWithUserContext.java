@@ -9,6 +9,7 @@ public class BookCatalogWithUserContext {
 	private RatingAndReview ratingAndReview;
 	private Rent currentOpenRent;
 	private BookCatalog bookCatalog;
+	private Boolean isWatching = false;
 	
 	public BookCatalogWithUserContext(BookCatalog bookCatalog) {
 		this.bookCatalog = bookCatalog;
@@ -42,11 +43,19 @@ public class BookCatalogWithUserContext {
 		this.currentOpenRent = currentOpenRent;
 	}
 
+	public Boolean getIsWatching() {
+		return isWatching;
+	}
+
+	public void setIsWatching(Boolean isWatching) {
+		this.isWatching = isWatching;
+	}
+
 	@Override
 	public String toString() {
 		return "BookCatalogWithUserContext [isAlreadyRented=" + isAlreadyRented
 				+ ", ratingAndReview=" + ratingAndReview + ", currentOpenRent="
-				+ currentOpenRent + ", bookCatalog=" + bookCatalog + "]";
+				+ currentOpenRent + ", bookCatalog=" + bookCatalog + ", isWatching="+isWatching+"]";
 	}
 	
 }

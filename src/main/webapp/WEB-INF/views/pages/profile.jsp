@@ -15,7 +15,7 @@ Email Id : ${user.emailId} <br/>
 <h1>Open Rents : </h1>
 <c:forEach var="r" items="${openRents}">
 	<c:choose>
-		<c:when test="${r.isDueDatePassed} == true">
+		<c:when test="${r.isDueDatePassed == true}">
 			<font color="red">
 		</c:when>
 		<c:otherwise>

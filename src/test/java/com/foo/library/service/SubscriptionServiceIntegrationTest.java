@@ -56,6 +56,11 @@ public class SubscriptionServiceIntegrationTest extends BaseIntegrationTest {
 		assertNotNull(watchers);
 		assertEquals(1, watchers.size());
 		assertEquals(userId, watchers.get(0).getId().getUserId());
+		
+		subscriptionService.unwatchForBookCatalog(userId, bookCatalogId);
+		watchers = subscriptionService.getWatchers(bookCatalogId);
+		assertNotNull(watchers);
+		assertEquals(0, watchers.size());
 	}
 	
 	private BookCatalog constructBookCatalog(String bookName, String author,

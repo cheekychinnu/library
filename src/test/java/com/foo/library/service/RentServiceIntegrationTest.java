@@ -218,7 +218,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 				.collect(Collectors.toList());
 		assertFalse(openRents.isEmpty());
 		assertFalse(openRents.get(0).getIsClosed());
-		assertFalse(openRents.get(0).isDueDatePassed());
+		assertFalse(openRents.get(0).getIsDueDatePassed());
 
 		rentService.returnBook(rentId, bookId);
 		openRents = rentService.getOpenRents(userId);
@@ -256,7 +256,7 @@ public class RentServiceIntegrationTest extends BaseIntegrationTest {
 				.collect(Collectors.toList());
 		assertFalse(rentsDueIn.isEmpty());
 		assertFalse(rentsDueIn.get(0).getIsClosed());
-		assertFalse(rentsDueIn.get(0).isDueDatePassed());
+		assertFalse(rentsDueIn.get(0).getIsDueDatePassed());
 	}
 
 	@Test

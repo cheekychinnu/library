@@ -32,7 +32,7 @@ public class RentServiceIntegrationTestWithSQLScripts extends
 		rentsDueIn = rentsDueIn.stream().filter(r -> r.getId().equals(rentId))
 				.collect(Collectors.toList());
 		assertFalse(rentsDueIn.isEmpty());
-		assertTrue(rentsDueIn.get(0).isDueDatePassed());
+		assertTrue(rentsDueIn.get(0).getIsDueDatePassed());
 		assertFalse(rentsDueIn.get(0).getIsClosed());
 	}
 

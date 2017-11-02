@@ -111,7 +111,17 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	public RentResponse rentBook(String userId, Long bookCatalogId) {
-		return rentService.rentBook(userId, bookCatalogId);
+		RentResponse response = rentService.rentBook(userId, bookCatalogId);
+		if (response.getIsSuccess()) {
+			boolean isWatching = subscriptionService.getWatchers(bookCatalogId)
+					.stream()
+					.anyMatch(w -> w.getId().getUserId().equals(userId));
+			if (isWatching) {
+				subscriptionService
+						.unwatchForBookCatalog(userId, bookCatalogId);
+			}
+		}
+		return response;
 	}
 
 	@Override
@@ -161,9 +171,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	public void watchForBookCatalog(String userId, Long bookCatalogId) {
-		subscriptionService.watchForBookCatalog(userId, bookCatalogId);		
+		subscriptionService.watchForBookCatalog(userId, bookCatalogId);
 	}
-	
+
 	@Override
 	public List<Watcher> getWatchersForUserId(String userId) {
 		return subscriptionService.getWatchers(userId);

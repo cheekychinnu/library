@@ -29,10 +29,15 @@
 				<td>
 				<c:choose>
 					<c:when test="${not empty b.currentOpenRent}">
-						<a href="/books/return?rentId=${b.currentOpenRent.id}">Return</a>
+						<a href="/books/return?rentId=${b.currentOpenRent.id}&bookCatalogId=${b.bookCatalog.id}">Return</a>
 					</c:when>
 					<c:when test="${b.bookCatalog.isAvailable == false}">
-						<a href="/books/watch?bookCatalogId=${b.bookCatalog.id}">Watch</a>
+						<c:if test="${b.isWatching == false}">
+							<a href="/books/watch?bookCatalogId=${b.bookCatalog.id}">Watch</a>
+						</c:if>
+						<c:if test="${b.isWatching == true}">
+							Watching
+						</c:if>
 					</c:when>
 					<c:otherwise>
 						<c:if
@@ -48,14 +53,14 @@
 					</c:otherwise>
 				</c:choose>
 					<c:choose>
-						<c:when test="${isDueDateMissed eq true}">
+						<c:when test="${isDueDateMissed[b.bookCatalog.id] eq true}">
 							Pending Due
 						</c:when>
-						<c:when test="${not empty rentResult}">
-							${rentResult}
+						<c:when test="${not empty rentResult[b.bookCatalog.id]}">
+							${rentResult[b.bookCatalog.id]}
 						</c:when>
-						<c:when test="${not empty watchMessage}">
-							${watchMessage}
+						<c:when test="${not empty watchMessage[b.bookCatalog.id]}">
+							${watchMessage[b.bookCatalog.id]}
 						</c:when>
 					</c:choose></td>
 			</tr>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
+	@Transactional
 	@Override
 	public void subscribeForNewAdditions(String userId) {
 		Subscriber subscriber = new Subscriber(userId,
@@ -41,7 +43,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		return subscriberJpaRepository
 				.findByEventType(EventType.NEW_BOOK_CATALOG);
 	}
-
+	
+	@Transactional
 	@Override
 	public void watchForBookCatalog(String userId, Long bookCatalogId) {
 		WatcherPK watcherPK = new WatcherPK(userId, bookCatalogId);
@@ -59,6 +62,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	@Override
 	public List<Watcher> getWatchers(String userId) {
 		return watcherJpaRepository.findByIdUserId(userId);
+	}
+
+	@Transactional
+	@Override
+	public void unwatchForBookCatalog(String userId, Long bookCatalogId) {
+		WatcherPK watcherPK = new WatcherPK(userId, bookCatalogId);
+		Watcher watcher = new Watcher();
+		watcher.setId(watcherPK);
+		watcherJpaRepository.deleteById(watcherPK);
+		entityManager.detach(watcher);
 	}
 
 }
