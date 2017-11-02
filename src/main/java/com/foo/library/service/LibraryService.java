@@ -34,10 +34,10 @@ public interface LibraryService {
 	
 	void rateAndReview(Long bookCatalogId, String userId,Integer rating, String review);
 	
-	void updateRating(Long bookCatalogId, String userId, Integer rating);
+	void insertOrUpdateRating(Long bookCatalogId, String userId, Integer rating);
 	
-	void updateReview(Long bookCatalogId, String userId, String review);
-
+	void insertOrUpdateReview(Long bookCatalogId, String userId, String review);
+	
 	List<RatingAndReview> getRatingAndReviewsForBookCatalog(Long bookCatalogId);
 	
 	List<RatingAndReview> getRatingAndReviewsForUser(String userId);

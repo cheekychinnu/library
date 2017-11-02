@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -16,6 +17,7 @@
 			<th>ISBN</th>
 			<th>Average Rating</th>
 			<th>Your Rating</th>
+			<th>Your Review</th>
 			<th>Rent/Watch/Return</th>
 		</tr>
 
@@ -25,7 +27,35 @@
 				<td>${b.bookCatalog.author}</td>
 				<td>${b.bookCatalog.isbn}</td>
 				<td>${b.bookCatalog.averageRating}</td>
-				<td>${b.ratingAndReview.rating}</td>
+				<td>
+				<c:choose>
+					<c:when test="${not empty b.ratingAndReview.rating}">
+					${b.ratingAndReview.rating}
+					</c:when>
+					<c:otherwise>
+						<form:form method="post" action="/books/rating" modelAttribute="ratingAndReview">
+							<form:hidden path="id.bookCatalogId" value="${b.bookCatalog.id}"/>
+							<form:radiobuttons path="rating" items="${possibleRatings}"/>
+							<input type="submit" value="Rate"/> 
+						</form:form>
+					</c:otherwise>
+					</c:choose>
+				</td>
+				<td>
+				<c:choose>
+					<c:when test="${not empty b.ratingAndReview.review}">
+					${b.ratingAndReview.review}
+					</c:when>
+					<c:otherwise>
+						<form:form method="post" action="/books/review" modelAttribute="ratingAndReview">
+							<form:hidden path="id.bookCatalogId" value="${b.bookCatalog.id}"/>
+							<form:textarea path="review"/>
+							<input type="submit" value="Review"/> 
+						</form:form>
+					</c:otherwise>
+					
+				</c:choose>
+				</td>
 				<td>
 				<c:choose>
 					<c:when test="${not empty b.currentOpenRent}">

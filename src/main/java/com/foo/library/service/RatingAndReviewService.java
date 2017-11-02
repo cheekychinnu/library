@@ -15,6 +15,10 @@ public interface RatingAndReviewService {
 
 	List<RatingAndReview> getRatingAndReviewsForUser(String userId);
 
+	void insertOrUpdateRating(Long bookCatalogId, String userId, Integer rating);
+	
+	void insertOrUpdateReview(Long bookCatalogId, String userId, String review);
+	
 	List<RatingAndReview> getRatingAndReviewsForBookCatalog(Long bookCatalogId);
 
 }

@@ -78,16 +78,6 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public void updateRating(Long bookCatalogId, String userId, Integer rating) {
-		ratingAndReviewService.updateRating(bookCatalogId, userId, rating);
-	}
-
-	@Override
-	public void updateReview(Long bookCatalogId, String userId, String review) {
-		ratingAndReviewService.updateReview(bookCatalogId, userId, review);
-	}
-
-	@Override
 	public List<RatingAndReview> getRatingAndReviewsForBookCatalog(
 			Long bookCatalogId) {
 		return ratingAndReviewService
@@ -187,6 +177,18 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public ReturnResponse returnBook(Long rentId) {
 		return rentService.returnBook(rentId);
+	}
+
+	@Override
+	public void insertOrUpdateRating(Long bookCatalogId, String userId,
+			Integer rating) {
+		ratingAndReviewService.insertOrUpdateRating(bookCatalogId, userId, rating);
+	}
+
+	@Override
+	public void insertOrUpdateReview(Long bookCatalogId, String userId,
+			String review) {
+		ratingAndReviewService.insertOrUpdateReview(bookCatalogId, userId, review);
 	}
 
 }
