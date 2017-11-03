@@ -1,6 +1,7 @@
 package com.foo.library.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.foo.library.model.Book;
 import com.foo.library.model.BookCatalog;
@@ -40,6 +41,9 @@ public interface LibraryService {
 	
 	List<RatingAndReview> getRatingAndReviewsForBookCatalog(Long bookCatalogId);
 	
+	Optional<RatingAndReview> getRatingAndReviewForBookCatalogAndUser(
+			Long bookCatalogId, String userId);
+	
 	List<RatingAndReview> getRatingAndReviewsForUser(String userId);
 	
 	RentResponse rentBook(String userId, Long bookCatalogId);
@@ -70,5 +74,11 @@ public interface LibraryService {
 	List<Rent> getRentsDueIn(Integer noOfDays);
 
 	List<Watcher> getWatchersForUserId(String userId);
+
+	void deleteRating(Long bookCatalogId, String userId);
+	
+	void deleteRatingAndReview(Long bookCatalogId, String userId);
+	
+	void deleteReview(Long bookCatalogId, String userId);
 	
 }

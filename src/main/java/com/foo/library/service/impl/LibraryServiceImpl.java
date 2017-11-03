@@ -1,6 +1,7 @@
 package com.foo.library.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -189,6 +190,28 @@ public class LibraryServiceImpl implements LibraryService {
 	public void insertOrUpdateReview(Long bookCatalogId, String userId,
 			String review) {
 		ratingAndReviewService.insertOrUpdateReview(bookCatalogId, userId, review);
+	}
+
+	@Override
+	public Optional<RatingAndReview> getRatingAndReviewForBookCatalogAndUser(
+			Long bookCatalogId, String userId) {
+		return ratingAndReviewService.getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+		
+	}
+
+	@Override
+	public void deleteRating(Long bookCatalogId, String userId) {
+		ratingAndReviewService.deleteRating(bookCatalogId, userId);
+	}
+
+	@Override
+	public void deleteRatingAndReview(Long bookCatalogId, String userId) {
+		ratingAndReviewService.deleteRatingAndReview(bookCatalogId, userId);
+	}
+
+	@Override
+	public void deleteReview(Long bookCatalogId, String userId) {
+		ratingAndReviewService.deleteReview(bookCatalogId, userId);
 	}
 
 }

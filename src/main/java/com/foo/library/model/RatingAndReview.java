@@ -6,23 +6,24 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import org.springframework.hateoas.ResourceSupport;
+
 @Entity
 public class RatingAndReview {
 
 	@EmbeddedId
 	private RatingAndReviewPK id;
-	
-	@OneToOne(cascade=CascadeType.REFRESH)
-	@JoinColumn(name="book_catalog_id", referencedColumnName="id", insertable=false, updatable=false)
-	private BookCatalog bookCatalog; 
-	
+
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "book_catalog_id", referencedColumnName = "id", insertable = false, updatable = false)
+	private BookCatalog bookCatalog;
+
 	private Integer rating;
 	private String review;
 
 	public RatingAndReview() {
 		super();
 	}
-
 
 	public BookCatalog getBookCatalog() {
 		return bookCatalog;
@@ -48,14 +49,12 @@ public class RatingAndReview {
 		this.review = review;
 	}
 
-
 	public RatingAndReviewPK getId() {
 		return id;
 	}
 
-
 	public void setId(RatingAndReviewPK id) {
 		this.id = id;
 	}
-	
+
 }

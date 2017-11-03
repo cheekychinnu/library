@@ -74,6 +74,17 @@
 			<artifactId>jstl</artifactId>
 		</dependency>
 		<!-- ************************************* -->
+		<!-- Adding for supporting RestController -->
+		<dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Adding support for HATEOAS -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>

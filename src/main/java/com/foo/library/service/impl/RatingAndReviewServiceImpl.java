@@ -28,6 +28,7 @@ public class RatingAndReviewServiceImpl implements RatingAndReviewService {
 	@Override
 	public void rateAndReview(Long bookCatalogId, String userId,
 			Integer rating, String review) {
+
 		RatingAndReviewPK ratingAndReviewPK = new RatingAndReviewPK(userId,
 				bookCatalogId);
 		RatingAndReview ratingAndReview = new RatingAndReview();
@@ -126,5 +127,54 @@ public class RatingAndReviewServiceImpl implements RatingAndReviewService {
 			entityManager.refresh(ratingAndReview); // refreshing this will
 													// refresh bookCatalog
 		}
+	}
+
+	@Override
+	public Optional<RatingAndReview> getRatingAndReviewForBookCatalogAndUser(
+			Long bookCatalogId, String userId) {
+		RatingAndReviewPK id = new RatingAndReviewPK(userId, bookCatalogId);
+		return ratingAndReviewJpaRepository.findById(id);
+	}
+
+	@Transactional
+	@Override
+	public void deleteRating(Long bookCatalogId, String userId) {
+		Optional<RatingAndReview> ratingAndReviewForBookCatalogAndUser = getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+		if(ratingAndReviewForBookCatalogAndUser.isPresent()){
+			RatingAndReview entity = ratingAndReviewForBookCatalogAndUser.get();
+			if(entity.getReview() != null) {
+				updateRating(bookCatalogId, userId, null);
+			} else {
+				entityManager.detach(entity);
+				ratingAndReviewJpaRepository.delete(entity);
+			}
+		}
+	}
+
+	@Transactional
+	@Override
+	public void deleteRatingAndReview(Long bookCatalogId, String userId) {
+		Optional<RatingAndReview> ratingAndReviewForBookCatalogAndUser = getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+		if(ratingAndReviewForBookCatalogAndUser.isPresent()){
+				RatingAndReview entity = ratingAndReviewForBookCatalogAndUser.get();
+				entityManager.detach(entity);
+				ratingAndReviewJpaRepository.delete(entity);
+				
+		}		
+	}
+
+	@Transactional
+	@Override
+	public void deleteReview(Long bookCatalogId, String userId) {
+		Optional<RatingAndReview> ratingAndReviewForBookCatalogAndUser = getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+		if(ratingAndReviewForBookCatalogAndUser.isPresent()){
+			RatingAndReview entity = ratingAndReviewForBookCatalogAndUser.get();
+			if(entity.getRating() != null) {
+				updateReview(bookCatalogId, userId, null);
+			} else {
+				entityManager.detach(entity);
+				ratingAndReviewJpaRepository.delete(entity);
+			}
+		}		
 	}
 }
