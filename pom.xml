@@ -21,16 +21,16 @@
 			<!-- this adds the tomcat-pooling for database -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-				<exclusions>
-	        		<exclusion>
-	        			<groupId>com.zaxxer</groupId>
-    					<artifactId>HikariCP</artifactId>
-	        		</exclusion>
-    			</exclusions>
+			<exclusions>
+				<exclusion>
+					<groupId>com.zaxxer</groupId>
+					<artifactId>HikariCP</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
+			<artifactId>tomcat-jdbc</artifactId>
 		</dependency>
 		<dependency>
 			<!-- Making this a web project so that I can view the h2 console -->
@@ -63,7 +63,7 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- To support JSP -->
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
@@ -76,15 +76,21 @@
 		<!-- ************************************* -->
 		<!-- Adding for supporting RestController -->
 		<dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Adding support for HATEOAS -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-hateoas</artifactId>
-        </dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Adding support for HATEOAS -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+		<!-- Randomizer for test -->
+		<dependency>
+			<groupId>io.github.benas</groupId>
+			<artifactId>random-beans</artifactId>
+			<version>3.7.0</version>
+		</dependency>	
 	</dependencies>
 
 	<build>
@@ -109,14 +115,16 @@
 		</repository>
 		<!-- Adding because I need the latest snapshot to try the new RequestContextUtils -->
 		<repository>
-            <id>spring-snapshots</id>
-            <url>http://repo.spring.io/snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <url>http://repo.spring.io/milestone</url>
-        </repository>
+			<id>spring-snapshots</id>
+			<url>http://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<url>http://repo.spring.io/milestone</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -127,13 +135,13 @@
 		</pluginRepository>
 		<!-- Adding because I need the latest snapshot to try the new RequestContextUtils -->
 		<pluginRepository>
-            <id>spring-snapshots</id>
-            <url>http://repo.spring.io/snapshot</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <url>http://repo.spring.io/milestone</url>
-        </pluginRepository>
+			<id>spring-snapshots</id>
+			<url>http://repo.spring.io/snapshot</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>http://repo.spring.io/milestone</url>
+		</pluginRepository>
 	</pluginRepositories>
 
 </project>

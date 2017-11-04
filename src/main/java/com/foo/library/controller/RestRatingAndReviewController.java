@@ -25,7 +25,6 @@ public class RestRatingAndReviewController {
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
 	public List<RatingAndReview> getAllRatingAndReviewsByUser(
 			@PathVariable String userId) {
-		System.out.println("called : getAllRatingAndReviewsByUser");
 		List<RatingAndReview> ratingAndReviewsForUser = libraryService
 				.getRatingAndReviewsForUser(userId);
 		return ratingAndReviewsForUser;
