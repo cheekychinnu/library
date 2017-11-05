@@ -211,16 +211,25 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	public void deleteRating(Long bookCatalogId, String userId) {
+		if(!isBookCatalogExists(bookCatalogId)) {
+			throw new BookCatalogNotFoundException(bookCatalogId);
+		}
 		ratingAndReviewService.deleteRating(bookCatalogId, userId);
 	}
 
 	@Override
 	public void deleteRatingAndReview(Long bookCatalogId, String userId) {
+		if(!isBookCatalogExists(bookCatalogId)) {
+			throw new BookCatalogNotFoundException(bookCatalogId);
+		}
 		ratingAndReviewService.deleteRatingAndReview(bookCatalogId, userId);
 	}
 
 	@Override
 	public void deleteReview(Long bookCatalogId, String userId) {
+		if(!isBookCatalogExists(bookCatalogId)) {
+			throw new BookCatalogNotFoundException(bookCatalogId);
+		}
 		ratingAndReviewService.deleteReview(bookCatalogId, userId);
 	}
 
