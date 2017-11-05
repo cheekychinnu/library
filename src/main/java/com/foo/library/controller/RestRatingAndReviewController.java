@@ -72,9 +72,11 @@ public class RestRatingAndReviewController {
 			@PathVariable Long bookCatalogId, @PathVariable String userId) {
 
 		libraryService.deleteRatingAndReview(bookCatalogId, userId);
-
-		ResponseEntity<?> responseEntity = getResponseEntityWithRatingAndReview(
-				bookCatalogId, userId, HttpStatus.OK, HttpStatus.OK);
+		Optional<RatingAndReview> ratingAndReviewForBookCatalogAndUser = libraryService
+				.getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+		ResponseEntity<?> responseEntity = ratingAndReviewForBookCatalogAndUser
+				.map(r -> new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR)).orElse(
+						new ResponseEntity<>(HttpStatus.OK));
 		return responseEntity;
 	}
 
@@ -92,8 +94,11 @@ public class RestRatingAndReviewController {
 	public ResponseEntity<?> deleteUserReviewForBookCatalog(
 			@PathVariable Long bookCatalogId, @PathVariable String userId) {
 		libraryService.deleteReview(bookCatalogId, userId);
-		ResponseEntity<?> responseEntity = getResponseEntityWithRatingAndReview(
-				bookCatalogId, userId, HttpStatus.OK, HttpStatus.OK);
+		Optional<RatingAndReview> ratingAndReviewForBookCatalogAndUser = libraryService
+				.getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+		ResponseEntity<?> responseEntity = ratingAndReviewForBookCatalogAndUser.filter(r->r.getReview()!=null)
+				.map(r -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)).orElse(
+						new ResponseEntity<>(HttpStatus.OK));
 		return responseEntity;
 	}
 
@@ -111,9 +116,15 @@ public class RestRatingAndReviewController {
 	public ResponseEntity<?> deleteUserRatingForBookCatalog(
 			@PathVariable Long bookCatalogId, @PathVariable String userId) {
 		libraryService.deleteRating(bookCatalogId, userId);
-		ResponseEntity<?> responseEntity = getResponseEntityWithRatingAndReview(
-				bookCatalogId, userId, HttpStatus.OK, HttpStatus.OK);
+		
+		Optional<RatingAndReview> ratingAndReviewForBookCatalogAndUser = libraryService
+				.getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+		ResponseEntity<?> responseEntity = ratingAndReviewForBookCatalogAndUser.filter(r->r.getRating()!=null)
+				.map(r -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)).orElse(
+						new ResponseEntity<>(HttpStatus.OK));
 		return responseEntity;
+	
+		
 	}
 
 	@RequestMapping(value = "/{bookCatalogId}", method = RequestMethod.GET)

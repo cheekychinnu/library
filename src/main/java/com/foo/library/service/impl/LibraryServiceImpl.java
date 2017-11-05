@@ -20,6 +20,7 @@ import com.foo.library.service.LibraryService;
 import com.foo.library.service.RatingAndReviewService;
 import com.foo.library.service.RentService;
 import com.foo.library.service.SubscriptionService;
+import com.foo.library.service.exception.BookCatalogNotFoundException;
 
 @Component
 public class LibraryServiceImpl implements LibraryService {
@@ -74,6 +75,9 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public void rateAndReview(Long bookCatalogId, String userId,
 			Integer rating, String review) {
+		if(!isBookCatalogExists(bookCatalogId)) {
+			throw new BookCatalogNotFoundException(bookCatalogId);
+		}
 		ratingAndReviewService.rateAndReview(bookCatalogId, userId, rating,
 				review);
 	}
@@ -183,12 +187,18 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public void insertOrUpdateRating(Long bookCatalogId, String userId,
 			Integer rating) {
+		if(!isBookCatalogExists(bookCatalogId)) {
+			throw new BookCatalogNotFoundException(bookCatalogId);
+		}
 		ratingAndReviewService.insertOrUpdateRating(bookCatalogId, userId, rating);
 	}
 
 	@Override
 	public void insertOrUpdateReview(Long bookCatalogId, String userId,
 			String review) {
+		if(!isBookCatalogExists(bookCatalogId)) {
+			throw new BookCatalogNotFoundException(bookCatalogId);
+		}
 		ratingAndReviewService.insertOrUpdateReview(bookCatalogId, userId, review);
 	}
 
@@ -212,6 +222,11 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public void deleteReview(Long bookCatalogId, String userId) {
 		ratingAndReviewService.deleteReview(bookCatalogId, userId);
+	}
+
+	@Override
+	public Boolean isBookCatalogExists(Long bookCatalogId) {
+		return bookService.isBookCatalogExists(bookCatalogId);
 	}
 
 }

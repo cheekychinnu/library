@@ -2,9 +2,12 @@ package com.foo.library.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -13,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import io.github.benas.randombeans.EnhancedRandomBuilder;
 import io.github.benas.randombeans.api.EnhancedRandom;
 
@@ -28,11 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.foo.library.model.RatingAndReview;
 import com.foo.library.service.LibraryService;
+import com.foo.library.service.exception.BookCatalogNotFoundException;
 
 @WebMvcTest(RestRatingAndReviewController.class)
 @RunWith(SpringRunner.class)
@@ -204,6 +211,38 @@ public class RestRatingAndReviewControllerTest {
 	}
 	
 	@Test
+	public void testUpdateUserRatingForBookCatalogForExceptionCase() throws Exception {
+		String userId = "vinodhini";
+		Long bookCatalogId = 1L;
+		RatingAndReview ratingAndReview = enhancedRandom.nextObject(RatingAndReview.class);
+		
+		Integer rating =ratingAndReview.getRating();
+		String jsonOfRatingAndReview = "{ \"rating\":" + rating+
+        "}";
+        
+		doThrow(new BookCatalogNotFoundException(bookCatalogId)).when(libraryService).insertOrUpdateRating(bookCatalogId, userId, rating);
+		String expectedContent = "[{\"logref\":\"1\",\"message\":\"BookCatalogId :1 is not found\",\"links\":[]}]";
+		MvcResult mvcResult = mockMvc
+		.perform(put("/rest/ratingAndReview/"+bookCatalogId+"/user/"+userId)
+				.accept(applicationJsonMediaType)
+				.contentType(this.applicationJsonMediaType)
+				.content(jsonOfRatingAndReview))
+		.andDo(print())
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType("application/vnd.error"))
+		.andExpect(jsonPath("$", hasSize(1)))
+		.andExpect(jsonPath("$[0].message", is("BookCatalogId :1 is not found")))
+		.andExpect(header().string("Content-Type", "application/vnd.error")).andReturn();
+		assertNotNull(mvcResult);
+		MockHttpServletResponse response = mvcResult.getResponse();
+		assertEquals("application/vnd.error",response.getContentType());
+		assertEquals(expectedContent, response.getContentAsString());
+		
+		verify(libraryService).insertOrUpdateRating(bookCatalogId, userId, rating);
+		verify(libraryService, never()).getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId);
+	}
+	
+	@Test
 	public void testUpdateUserRatingAndReviewForBookCatalog() throws Exception {
 		String userId = "vinodhini";
 		Long bookCatalogId = 1L;
@@ -273,5 +312,23 @@ public class RestRatingAndReviewControllerTest {
 	
 	}
 	
+	@Test
+	public void testDeleteReviewForFailure() throws Exception {
+
+		String userId = "vinodhini";
+		Long bookCatalogId = 1L;
+		RatingAndReview ratingAndReview = enhancedRandom.nextObject(RatingAndReview.class);
+		
+		Optional<RatingAndReview> optional = Optional.of(ratingAndReview);
+		when(libraryService.getRatingAndReviewForBookCatalogAndUser(bookCatalogId, userId)).thenReturn(optional);
+		
+		mockMvc
+		.perform(delete("/rest/ratingAndReview/"+bookCatalogId+"/user/"+userId+"/review"))
+		.andDo(print())
+		.andExpect(status().isInternalServerError());
+		verify(libraryService).deleteReview(bookCatalogId, userId);
+	
+	}	
 
 }
+

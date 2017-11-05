@@ -20,5 +20,6 @@ public interface BookService {
 	List<BookCatalog> searchBookCatalogByBookName(String name);
 
 	List<BookCatalog> getAllBookCatalogsWithRatingsAndAvailability();
-
+	
+	boolean isBookCatalogExists(Long bookCatalogId);
 }

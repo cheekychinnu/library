@@ -80,5 +80,7 @@ public interface LibraryService {
 	void deleteRatingAndReview(Long bookCatalogId, String userId);
 	
 	void deleteReview(Long bookCatalogId, String userId);
+
+	Boolean isBookCatalogExists(Long bookCatalogId);
 	
 }

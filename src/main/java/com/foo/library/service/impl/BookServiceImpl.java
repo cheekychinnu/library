@@ -105,4 +105,9 @@ public class BookServiceImpl implements BookService {
 		return new ArrayList<>(uniqueCatalogs);
 	}
 
+	@Override
+	public boolean isBookCatalogExists(Long bookCatalogId) {
+		return bookCatalogJpaRepository.existsById(bookCatalogId);
+	}
+
 }
