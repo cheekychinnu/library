@@ -11,7 +11,9 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 
+@PropertySource("classpath:gmail.smtp.properties")
 @SpringBootApplication
 public class Application {
 	

@@ -17,6 +17,12 @@
 	</properties>
 
 	<dependencies>
+		<!-- This is needed to send mail notification for pending dues -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<!-- This is to make the app https -->
 	    <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>

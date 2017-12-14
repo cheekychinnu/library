@@ -28,6 +28,8 @@ bin/
 .settings/
 .classpath
 .project
+src/main/resources/gmail.smtp.properties
+src/main/resources/keystore.p12
 
 # Windows image file caches
 Thumbs.db

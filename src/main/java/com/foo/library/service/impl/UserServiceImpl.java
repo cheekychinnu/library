@@ -1,6 +1,7 @@
 package com.foo.library.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -40,6 +41,15 @@ public class UserServiceImpl implements UserService{
 			return findByIdAndPassword.get(0);
 		} 
 		return null;
+	}
+
+	@Override
+	public User getUser(String userId) {
+		Optional<User> user = userJpaRepository.findById(userId);
+		if (user.isPresent()) {
+			return user.get();
+		}
+		throw new IllegalArgumentException(userId+" is not found");
 	}
 
 }
